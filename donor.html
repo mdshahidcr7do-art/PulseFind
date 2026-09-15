@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donor dashboard — PulseFind</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .dash-head {
+    background: var(--navy);
+    padding: 1.75rem 1.5rem 2rem;
+  }
+  .dash-head-inner { max-width: 720px; margin: 0 auto; }
+  .donor-name { color: var(--white); font-size: 1.5rem; }
+  .donor-meta {
+    color: rgba(247, 244, 236, 0.65);
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .blood-badge {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+  }
+
+  .avail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(247, 244, 236, 0.07);
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+    margin-top: 1.25rem;
+  }
+  .avail-row p { color: var(--white); font-size: 0.92rem; font-weight: 500; }
+  .avail-row .sub { color: rgba(247, 244, 236, 0.6); font-size: 0.8rem; font-weight: 400; margin-top: 0.1rem; }
+
+  .switch {
+    position: relative;
+    width: 46px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .track {
+    position: absolute; inset: 0;
+    background: rgba(247, 244, 236, 0.25);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .switch .track::before {
+    content: "";
+    position: absolute;
+    width: 20px; height: 20px;
+    left: 3px; top: 3px;
+    background: var(--white);
+    border-radius: 50%;
+    transition: transform 0.15s ease;
+  }
+  .switch input:checked + .track { background: var(--stock-ok); }
+  .switch input:checked + .track::before { transform: translateX(20px); }
+
+  .wide-container { max-width: 720px; margin: 0 auto; padding: 1.75rem 1.25rem 3rem; }
+
+  .section-title {
+    font-size: 1.05rem;
+    color: var(--navy-ink);
+    margin-bottom: 0.9rem;
+  }
+
+  .request-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--stock-out);
+    border-radius: 8px;
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 0.9rem;
+  }
+  .request-card.responded { border-left-color: var(--stock-ok); opacity: 0.75; }
+
+  .request-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .request-top .who { font-weight: 600; font-size: 1rem; }
+  .request-top .where { color: var(--muted); font-size: 0.85rem; margin-top: 0.15rem; }
+  .request-top .where a { color: var(--navy); font-weight: 600; text-decoration: underline; }
+  .request-group {
+    font-family: var(--serif);
+    font-weight: 700;
+    color: var(--stock-out);
+    font-size: 1.3rem;
+    white-space: nowrap;
+  }
+
+  .request-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.9rem;
+  }
+  .urgency-tag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--stock-out);
+    background: rgba(139, 38, 53, 0.08);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+  }
+
+  .respond-btn {
+    background: var(--navy);
+    color: var(--white);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    border-radius: 7px;
+  }
+  .respond-btn:hover { background: var(--gold); color: var(--navy); }
+  .respond-btn[disabled] {
+    background: var(--stock-ok);
+    color: var(--white);
+    cursor: default;
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="index.html" class="brand">PulseFind</a>
+    <nav>
+      <a href="search.html">Search</a>
+      <a href="login.html">Sign out</a>
+    </nav>
+  </div>
+
+  <header class="dash-head">
+    <div class="dash-head-inner">
+      <h1 class="donor-name" id="donor-name">Loading…</h1>
+      <p class="donor-meta">
+        <span class="blood-badge" id="donor-bloodgroup">—</span>
+        <span id="donor-area"></span>
+      </p>
+
+      <div class="avail-row">
+        <div>
+          <p>Available to donate</p>
+          <p class="sub">Turn off if you're not able to donate right now</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="avail-toggle" disabled>
+          <span class="track"></span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main class="wide-container">
+    <p class="section-title">Urgent requests near you</p>
+
+    <div id="requests-list">
+      <p style="color: var(--muted); font-size: 0.9rem;">Loading requests…</p>
+    </div>
+  </main>
+
+  <p class="footer-note">Built for Innovik 6.0 by Team PulseCode</p>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <script>
+    const availToggle = document.getElementById('avail-toggle');
+    const requestsList = document.getElementById('requests-list');
+
+    const INDORE_FALLBACK = { lat: 22.7196, lng: 75.8577 };
+
+    function haversineKm(a, b) {
+      const toRad = (deg) => (deg * Math.PI) / 180;
+      const R = 6371;
+      const dLat = toRad(b.lat - a.lat);
+      const dLng = toRad(b.lng - a.lng);
+      const lat1 = toRad(a.lat);
+      const lat2 = toRad(b.lat);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.asin(Math.sqrt(h));
+    }
+
+    const URGENCY_LABELS = {
+      urgent: 'Needed urgently',
+      '24hr': 'Needed within 24 hrs',
+      planning: 'Planning ahead',
+    };
+
+    function loadRequests(donorUid, bloodGroup, donorLoc) {
+      db.collection('blood_requests')
+        .where('bloodGroup', '==', bloodGroup)
+        .where('status', '==', 'open')
+        .get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            requestsList.innerHTML = '<p style="color: var(--muted); font-size: 0.9rem;">No open requests for your blood group right now.</p>';
+            return;
+          }
+
+          const requests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+          // Check which of these this donor has already responded to.
+          Promise.all(requests.map(r =>
+            db.collection('blood_requests').doc(r.id).collection('responses').doc(donorUid).get()
+          )).then((responseDocs) => {
+            requestsList.innerHTML = '';
+
+            const rows = requests.map((r, i) => {
+              const hasLoc = typeof r.lat === 'number' && typeof r.lng === 'number';
+              const distKm = hasLoc ? haversineKm(donorLoc, { lat: r.lat, lng: r.lng }) : Infinity;
+              return { ...r, _dist: distKm, _hasLoc: hasLoc, _responded: responseDocs[i].exists };
+            }).sort((a, b) => a._dist - b._dist);
+
+            rows.forEach((r) => {
+              const card = document.createElement('div');
+              card.className = 'request-card' + (r._responded ? ' responded' : '');
+              const distText = r._hasLoc ? `${r._dist.toFixed(1)} km away` : 'distance unknown';
+              card.innerHTML = `
+                <div class="request-top">
+                  <div>
+                    <p class="who">Requested for ${r.patientName || 'a patient'}</p>
+                    <p class="where">${r.hospital || 'Location not given'} &nbsp;·&nbsp; ${distText}
+                      ${r.contactPhone ? `&nbsp;·&nbsp; <a href="tel:${r.contactPhone}">Call ${r.contactPhone}</a>` : ''}
+                    </p>
+                  </div>
+                  <p class="request-group">${r.bloodGroup}</p>
+                </div>
+                <div class="request-bottom">
+                  <span class="urgency-tag">${URGENCY_LABELS[r.urgency] || 'Blood needed'}</span>
+                  <button class="respond-btn" data-respond="${r.id}" ${r._responded ? 'disabled' : ''}>${r._responded ? 'You responded' : 'I can help'}</button>
+                </div>
+              `;
+              requestsList.appendChild(card);
+            });
+          });
+        })
+        .catch((err) => {
+          console.error('Failed to load requests:', err);
+          requestsList.innerHTML = '<p style="color: var(--muted); font-size: 0.9rem;">Could not load requests right now.</p>';
+        });
+    }
+
+    requestsList.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-respond]');
+      if (!btn || !currentDonorUid) return;
+      const requestId = btn.dataset.respond;
+
+      btn.disabled = true;
+      btn.textContent = 'You responded';
+      btn.closest('.request-card').classList.add('responded');
+
+      db.collection('blood_requests').doc(requestId).collection('responses').doc(currentDonorUid).set({
+        respondedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }).catch((err) => {
+        console.error('Could not record response:', err);
+      });
+    });
+
+    let currentDonorUid = null;
+
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      db.collection('users').doc(user.uid).get().then((doc) => {
+        if (!doc.exists || doc.data().role !== 'donor') {
+          window.location.href = doc.exists && doc.data().role === 'pharmacy' ? 'provider-dashboard.html' : 'login.html';
+          return;
+        }
+
+        return db.collection('donors').doc(user.uid).get().then((donorDoc) => {
+          if (!donorDoc.exists) return;
+          const data = donorDoc.data();
+          currentDonorUid = user.uid;
+          document.getElementById('donor-name').textContent = data.name || 'Donor';
+          document.getElementById('donor-bloodgroup').textContent = data.bloodGroup || '—';
+          document.getElementById('donor-area').textContent = data.area || '';
+          availToggle.checked = data.available !== false;
+          availToggle.disabled = false;
+
+          availToggle.addEventListener('change', (e) => {
+            db.collection('donors').doc(user.uid).update({ available: e.target.checked })
+              .catch((err) => {
+                console.error('Could not update availability:', err);
+                e.target.checked = !e.target.checked; // revert the toggle on failure
+              });
+          });
+
+          const donorLoc = (typeof data.lat === 'number' && typeof data.lng === 'number')
+            ? { lat: data.lat, lng: data.lng }
+            : INDORE_FALLBACK;
+
+          if (data.bloodGroup) {
+            loadRequests(user.uid, data.bloodGroup, donorLoc);
+          } else {
+            requestsList.innerHTML = '<p style="color: var(--muted); font-size: 0.9rem;">No blood group on file for your account.</p>';
+          }
+        });
+      }).catch((err) => {
+        console.error('Failed to load donor profile:', err);
+      });
+    });
+  </script>
+
+</body>
+</html>

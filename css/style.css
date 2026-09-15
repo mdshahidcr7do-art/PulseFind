@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #0B1D3A;
+  --navy-ink: #16213E;
+  --gold: #C9A227;
+  --gold-light: #E8C468;
+  --cream: #F7F4EC;
+  --muted: #5C6178;
+  --border: #E4DFD2;
+  --stock-ok: #3F7A4F;
+  --stock-low: #B08A2E;
+  --stock-out: #8B2635;
+  --white: #FFFFFF;
+
+  --serif: 'Lora', Georgia, serif;
+  --sans: 'Work Sans', -apple-system, Segoe UI, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--navy-ink);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: var(--serif);
+  color: var(--navy);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button, .btn {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  padding: 0.85rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--navy);
+}
+.btn-primary:hover { background: var(--gold-light); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--cream);
+  border: 1.5px solid rgba(247, 244, 236, 0.4);
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold-light); }
+
+input, select, textarea {
+  font-family: var(--sans);
+  font-size: 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--navy-ink);
+  width: 100%;
+}
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  border-color: var(--gold);
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+/* ---------- Top bar (shared across inner pages) ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.5rem;
+  background: var(--navy);
+}
+
+.topbar .brand {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.topbar nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.topbar nav a {
+  color: rgba(247, 244, 236, 0.75);
+  font-size: 0.95rem;
+}
+.topbar nav a:hover { color: var(--gold-light); }
+
+/* ---------- Status pill ---------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+}
+.status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.status-ok { background: rgba(63, 122, 79, 0.12); color: var(--stock-ok); }
+.status-ok::before { background: var(--stock-ok); }
+.status-low { background: rgba(176, 138, 46, 0.14); color: var(--stock-low); }
+.status-low::before { background: var(--stock-low); }
+.status-out { background: rgba(139, 38, 53, 0.1); color: var(--stock-out); }
+.status-out::before { background: var(--stock-out); }
+
+/* ---------- Directory row (search results / inventory lists) ---------- */
+.directory-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--white);
+  border-left: 4px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.75rem;
+}
+.directory-row.ok { border-left-color: var(--stock-ok); }
+.directory-row.low { border-left-color: var(--stock-low); }
+.directory-row.out { border-left-color: var(--stock-out); opacity: 0.7; }
+
+.directory-row .info { flex: 1; min-width: 0; }
+.directory-row .name { font-weight: 600; font-size: 1.02rem; }
+.directory-row .meta { color: var(--muted); font-size: 0.87rem; margin-top: 0.15rem; }
+.directory-row .distance {
+  font-family: var(--serif);
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.footer-note {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  padding: 1.5rem 1rem;
+}
+
+@media (max-width: 640px) {
+  .topbar { padding: 1rem 1.1rem; }
+}

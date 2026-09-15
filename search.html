@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search — PulseFind</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .search-panel {
+    background: var(--navy);
+    padding: 1.75rem 1.5rem 2.25rem;
+  }
+  .search-panel-inner { max-width: 720px; margin: 0 auto; }
+  .search-panel h1 {
+    color: var(--white);
+    font-size: 1.6rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .mode-tabs {
+    display: inline-flex;
+    background: rgba(247, 244, 236, 0.08);
+    border-radius: 8px;
+    padding: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  .mode-tab {
+    border: none;
+    background: transparent;
+    color: rgba(247, 244, 236, 0.7);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.55rem 1.1rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .mode-tab[aria-selected="true"] {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  .search-row {
+    display: flex;
+    gap: 0.6rem;
+  }
+  .search-row input, .search-row select { flex: 1; }
+  .search-row button {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 600;
+    padding: 0 1.4rem;
+    border-radius: 8px;
+  }
+  .search-row button:hover { background: var(--gold-light); }
+
+  .location-line {
+    color: rgba(247, 244, 236, 0.65);
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+  }
+  .location-line button {
+    background: none;
+    border: none;
+    color: var(--gold-light);
+    font-size: 0.85rem;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .results-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .results-header h2 { font-size: 1.1rem; color: var(--navy-ink); }
+  .results-header span { color: var(--muted); font-size: 0.85rem; }
+
+  .field-group[hidden] { display: none; }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+  }
+  .empty-state[hidden] { display: none; }
+
+  .directory-row .meta a {
+    color: var(--navy);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+  .directory-row .contact-links .no-phone {
+    color: var(--muted);
+    font-weight: 400;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="index.html" class="brand">PulseFind</a>
+    <nav>
+      <a href="donor.html">Become a donor</a>
+      <a href="login.html">Sign in</a>
+    </nav>
+  </div>
+
+  <section class="search-panel">
+    <div class="search-panel-inner">
+      <h1>What are you looking for?</h1>
+
+      <div class="mode-tabs" role="tablist" aria-label="Search type">
+        <button class="mode-tab" role="tab" aria-selected="true" id="tab-medicine">Medicine</button>
+        <button class="mode-tab" role="tab" aria-selected="false" id="tab-blood">Blood group</button>
+      </div>
+
+      <form id="search-form">
+        <div class="search-row field-group" id="field-medicine">
+          <input type="text" id="medicine-input" placeholder="e.g. Paracetamol 650" aria-label="Medicine name">
+          <button type="submit">Search</button>
+        </div>
+        <div class="search-row field-group" id="field-blood" hidden>
+          <select id="blood-input" aria-label="Blood group">
+            <option value="">Select blood group</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+          </select>
+          <button type="submit">Search</button>
+        </div>
+      </form>
+
+      <p class="location-line" id="location-line">
+        Getting your location…
+      </p>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="results-header">
+      <h2 id="results-title">Search for a medicine or blood group above</h2>
+      <span id="results-count"></span>
+    </div>
+
+    <div id="medicine-results"></div>
+    <div id="blood-results" hidden></div>
+
+    <div class="empty-state" id="empty-state" hidden>
+      <p id="empty-state-text">No results yet — try a different search or widen your area.</p>
+    </div>
+
+    <div id="request-cta" hidden style="margin-top: 2rem;">
+      <p class="section-title">Can't find a donor?</p>
+      <button type="button" id="show-request-form" class="btn-primary">Post an urgent blood request</button>
+
+      <form id="request-form" hidden style="margin-top: 1rem; display: grid; gap: 1rem; max-width: 480px;">
+        <div class="field">
+          <label for="req-patient">Patient's name</label>
+          <input type="text" id="req-patient" required>
+        </div>
+        <div class="field">
+          <label for="req-phone">Contact phone</label>
+          <input type="tel" id="req-phone" placeholder="10-digit mobile number" required>
+        </div>
+        <div class="field">
+          <label for="req-hospital">Hospital / location</label>
+          <input type="text" id="req-hospital" placeholder="e.g. City Hospital, Vijay Nagar" required>
+        </div>
+        <div class="field">
+          <label for="req-urgency">Urgency</label>
+          <select id="req-urgency">
+            <option value="urgent">Needed urgently</option>
+            <option value="24hr">Needed within 24 hrs</option>
+            <option value="planning">Planning ahead</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary" id="req-submit-btn">Post request</button>
+        <p id="request-status" style="display: none; font-size: 0.85rem;"></p>
+      </form>
+    </div>
+  </main>
+
+  <p class="footer-note">Built for Innovik 6.0 by Team PulseCode</p>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <script>
+    const tabMedicine = document.getElementById('tab-medicine');
+    const tabBlood = document.getElementById('tab-blood');
+    const fieldMedicine = document.getElementById('field-medicine');
+    const fieldBlood = document.getElementById('field-blood');
+    const medicineResults = document.getElementById('medicine-results');
+    const bloodResults = document.getElementById('blood-results');
+    const resultsTitle = document.getElementById('results-title');
+    const resultsCount = document.getElementById('results-count');
+    const emptyState = document.getElementById('empty-state');
+    const emptyStateText = document.getElementById('empty-state-text');
+    const locationLine = document.getElementById('location-line');
+    const requestCta = document.getElementById('request-cta');
+    const showRequestFormBtn = document.getElementById('show-request-form');
+    const requestForm = document.getElementById('request-form');
+    const requestStatus = document.getElementById('request-status');
+
+    let currentMode = 'medicine';
+    let userLoc = null; // { lat, lng } or null if unavailable — Indore fallback used either way
+
+    // Fallback center so a demo still works even if location permission is denied.
+    const INDORE_FALLBACK = { lat: 22.7196, lng: 75.8577 };
+
+    function haversineKm(a, b) {
+      const toRad = (deg) => (deg * Math.PI) / 180;
+      const R = 6371;
+      const dLat = toRad(b.lat - a.lat);
+      const dLng = toRad(b.lng - a.lng);
+      const lat1 = toRad(a.lat);
+      const lat2 = toRad(b.lat);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.asin(Math.sqrt(h));
+    }
+
+    function getUserLocation() {
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) { resolve(null); return; }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          () => resolve(null),
+          { timeout: 8000 }
+        );
+      });
+    }
+
+    function refreshLocation() {
+      locationLine.textContent = 'Getting your location…';
+      getUserLocation().then((l) => {
+        userLoc = l || INDORE_FALLBACK;
+        locationLine.innerHTML = l
+          ? 'Using your current location &nbsp;<button type="button" id="change-loc">Change</button>'
+          : 'Location unavailable — showing results near Indore, MP &nbsp;<button type="button" id="change-loc">Retry</button>';
+        document.getElementById('change-loc').addEventListener('click', refreshLocation);
+      });
+    }
+    refreshLocation();
+
+    function setMode(mode) {
+      currentMode = mode;
+      const isMedicine = mode === 'medicine';
+      tabMedicine.setAttribute('aria-selected', isMedicine);
+      tabBlood.setAttribute('aria-selected', !isMedicine);
+      fieldMedicine.hidden = !isMedicine;
+      fieldBlood.hidden = isMedicine;
+      medicineResults.hidden = !isMedicine;
+      bloodResults.hidden = isMedicine;
+      resultsTitle.textContent = isMedicine ? 'Search for a medicine' : 'Search for a blood group';
+      resultsCount.textContent = '';
+      medicineResults.innerHTML = '';
+      bloodResults.innerHTML = '';
+      emptyState.hidden = true;
+      requestCta.hidden = isMedicine;
+    }
+
+    tabMedicine.addEventListener('click', () => setMode('medicine'));
+    tabBlood.addEventListener('click', () => setMode('blood'));
+
+    function statusLabel(status) {
+      if (status === 'ok') return { cls: 'status-ok', text: 'In stock' };
+      if (status === 'low') return { cls: 'status-low', text: 'Low stock' };
+      return { cls: 'status-out', text: 'Out of stock' };
+    }
+
+    function mapsUrl(lat, lng, fallbackText) {
+      if (typeof lat === 'number' && typeof lng === 'number') {
+        return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+      }
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fallbackText || '')}`;
+    }
+
+    function renderRows(container, rows, kind) {
+      container.innerHTML = '';
+      if (rows.length === 0) {
+        emptyState.hidden = false;
+        emptyStateText.textContent = kind === 'medicine'
+          ? 'No nearby pharmacies have that in stock right now — try a different medicine name.'
+          : 'No available donors with that blood group nearby yet.';
+        return;
+      }
+      emptyState.hidden = true;
+      rows.forEach((r) => {
+        const row = document.createElement('div');
+        row.className = `directory-row ${r.rowClass}`;
+        const directionsHref = mapsUrl(r.lat, r.lng, r.meta);
+        row.innerHTML = `
+          <div class="info">
+            <p class="name">${r.name}</p>
+            <p class="meta">${r.meta} &nbsp;·&nbsp; <span class="status ${r.status.cls}">${r.status.text}</span></p>
+            <p class="meta contact-links">
+              ${r.phone ? `<a href="tel:${r.phone}">Call ${r.phone}</a>` : '<span class="no-phone">No phone number on file</span>'}
+              &nbsp;·&nbsp;
+              <a href="${directionsHref}" target="_blank" rel="noopener">Directions</a>
+            </p>
+          </div>
+          <p class="distance">${r.distance}</p>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function runMedicineSearch(query) {
+      resultsTitle.textContent = `Pharmacies with "${query}" nearby`;
+      medicineResults.innerHTML = '<p style="color: var(--muted); padding: 1rem 0;">Searching…</p>';
+      const q = query.trim().toLowerCase();
+
+      db.collection('inventory').get().then((snapshot) => {
+        const matches = snapshot.docs
+          .map(doc => doc.data())
+          .filter(item => item.name && item.name.toLowerCase().includes(q));
+
+        const pharmacyIds = [...new Set(matches.map(m => m.pharmacyId))];
+        return Promise.all(pharmacyIds.map(id => db.collection('pharmacies').doc(id).get()))
+          .then((pharmacyDocs) => {
+            const pharmacyMap = {};
+            pharmacyDocs.forEach(d => { if (d.exists) pharmacyMap[d.id] = d.data(); });
+
+            const rows = matches
+              .filter(m => pharmacyMap[m.pharmacyId])
+              .map((m) => {
+                const ph = pharmacyMap[m.pharmacyId];
+                const hasLoc = typeof ph.lat === 'number' && typeof ph.lng === 'number';
+                const distKm = hasLoc ? haversineKm(userLoc, { lat: ph.lat, lng: ph.lng }) : Infinity;
+                return {
+                  name: ph.name || 'Pharmacy',
+                  meta: ph.area || '',
+                  status: statusLabel(m.status),
+                  rowClass: m.status === 'out' ? 'out' : m.status,
+                  distance: hasLoc ? `${distKm.toFixed(1)} km` : '—',
+                  phone: ph.phone || null,
+                  lat: hasLoc ? ph.lat : null,
+                  lng: hasLoc ? ph.lng : null,
+                  _dist: distKm,
+                };
+              })
+              .sort((a, b) => a._dist - b._dist);
+
+            resultsCount.textContent = `${rows.length} result${rows.length === 1 ? '' : 's'}`;
+            renderRows(medicineResults, rows, 'medicine');
+          });
+      }).catch((err) => {
+        medicineResults.innerHTML = '';
+        console.error('Medicine search failed:', err);
+      });
+    }
+
+    function runBloodSearch(group) {
+      resultsTitle.textContent = `Donors with ${group} nearby`;
+      bloodResults.innerHTML = '<p style="color: var(--muted); padding: 1rem 0;">Searching…</p>';
+
+      db.collection('donors')
+        .where('bloodGroup', '==', group)
+        .where('available', '==', true)
+        .get()
+        .then((snapshot) => {
+          const rows = snapshot.docs
+            .map(doc => doc.data())
+            .map((d) => {
+              const hasLoc = typeof d.lat === 'number' && typeof d.lng === 'number';
+              const distKm = hasLoc ? haversineKm(userLoc, { lat: d.lat, lng: d.lng }) : Infinity;
+              return {
+                name: d.name || 'Donor',
+                meta: `Registered donor · ${d.area || ''}`,
+                status: { cls: 'status-ok', text: 'Available' },
+                rowClass: 'ok',
+                distance: hasLoc ? `${distKm.toFixed(1)} km` : '—',
+                phone: d.phone || null,
+                lat: hasLoc ? d.lat : null,
+                lng: hasLoc ? d.lng : null,
+                _dist: distKm,
+              };
+            })
+            .sort((a, b) => a._dist - b._dist);
+
+          resultsCount.textContent = `${rows.length} result${rows.length === 1 ? '' : 's'}`;
+          renderRows(bloodResults, rows, 'blood');
+        })
+        .catch((err) => {
+          bloodResults.innerHTML = '';
+          console.error('Blood search failed:', err);
+        });
+    }
+
+    document.getElementById('search-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (currentMode === 'medicine') {
+        const query = document.getElementById('medicine-input').value.trim();
+        if (!query) return;
+        runMedicineSearch(query);
+      } else {
+        const group = document.getElementById('blood-input').value;
+        if (!group) return;
+        runBloodSearch(group);
+        requestCta.hidden = false;
+      }
+    });
+
+    showRequestFormBtn.addEventListener('click', () => {
+      requestForm.hidden = !requestForm.hidden;
+    });
+
+    requestForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const group = document.getElementById('blood-input').value;
+      if (!group) {
+        requestStatus.style.display = 'block';
+        requestStatus.style.color = 'var(--stock-out)';
+        requestStatus.textContent = 'Select a blood group above first.';
+        return;
+      }
+
+      const patientName = document.getElementById('req-patient').value.trim();
+      const phone = document.getElementById('req-phone').value.trim();
+      const hospital = document.getElementById('req-hospital').value.trim();
+      const urgency = document.getElementById('req-urgency').value;
+      const submitBtn = document.getElementById('req-submit-btn');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Posting…';
+
+      db.collection('blood_requests').add({
+        patientName,
+        contactPhone: phone,
+        hospital,
+        bloodGroup: group,
+        urgency,
+        area: hospital,
+        lat: userLoc ? userLoc.lat : null,
+        lng: userLoc ? userLoc.lng : null,
+        status: 'open',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }).then(() => {
+        requestForm.reset();
+        requestForm.hidden = true;
+        requestStatus.style.display = 'block';
+        requestStatus.style.color = 'var(--stock-ok)';
+        requestStatus.textContent = 'Posted — donors with this blood group nearby will see your request.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Post request';
+      }).catch((err) => {
+        requestStatus.style.display = 'block';
+        requestStatus.style.color = 'var(--stock-out)';
+        requestStatus.textContent = 'Could not post your request: ' + err.message;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Post request';
+      });
+    });
+  </script>
+
+</body>
+</html>

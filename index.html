@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PulseFind — Find medicine or blood, nearby, right now</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .hero {
+    background: var(--navy);
+    padding: 3rem 1.5rem 4rem;
+    color: var(--white);
+  }
+  .hero-inner { max-width: 760px; margin: 0 auto; }
+  .hero-tag {
+    color: var(--gold-light);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.9rem;
+  }
+  .hero h1 {
+    color: var(--white);
+    font-size: clamp(2rem, 5vw, 2.9rem);
+    max-width: 14ch;
+  }
+  .hero p {
+    color: rgba(247, 244, 236, 0.8);
+    font-size: 1.05rem;
+    max-width: 46ch;
+    margin-top: 1rem;
+  }
+  .hero-actions { display: flex; gap: 0.9rem; margin-top: 1.75rem; flex-wrap: wrap; }
+
+  .paths {
+    max-width: 760px;
+    margin: -2.5rem auto 0;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+  }
+  .path-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.6rem;
+    display: block;
+  }
+  .path-card .path-kicker {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .path-card h2 { font-size: 1.35rem; margin-bottom: 0.5rem; }
+  .path-card p { color: var(--muted); font-size: 0.92rem; }
+  .path-card .go {
+    margin-top: 1.1rem;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 0.92rem;
+  }
+  .path-card:hover { border-color: var(--gold); }
+
+  .how {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 2rem;
+  }
+  .how h3 { font-size: 1.5rem; margin-bottom: 1.75rem; }
+  .steps { display: grid; gap: 1.4rem; }
+  .step { display: flex; gap: 1rem; }
+  .step .n {
+    font-family: var(--serif);
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 1.1rem;
+    width: 1.6rem;
+    flex-shrink: 0;
+  }
+  .step p { color: var(--muted); font-size: 0.95rem; }
+  .step strong { color: var(--navy-ink); display: block; margin-bottom: 0.15rem; }
+
+  @media (max-width: 600px) {
+    .paths { grid-template-columns: 1fr; margin-top: -1.75rem; }
+    .hero { padding: 2.25rem 1.25rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="hero-tag">PulseFind · Innovik 6.0</p>
+      <h1>Find medicine or blood, nearby, right now.</h1>
+      <p>Search once, see which nearby pharmacies or donors actually have what you need — sorted by distance, updated live.</p>
+      <div class="hero-actions">
+        <a href="search.html" class="btn btn-primary">Search now</a>
+        <a href="login.html" class="btn btn-outline">Sign in</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="paths" aria-label="Choose how you'll use PulseFind">
+    <a href="search.html" class="path-card">
+      <p class="path-kicker">Seeker</p>
+      <h2>I need help</h2>
+      <p>Search a medicine name or a blood group and see who nearby has it in stock.</p>
+      <p class="go">Search nearby &nbsp;›</p>
+    </a>
+    <a href="login.html" class="path-card">
+      <p class="path-kicker">Provider / Donor</p>
+      <h2>I can help</h2>
+      <p>List your pharmacy's stock or register as a blood donor for your area.</p>
+      <p class="go">Get started &nbsp;›</p>
+    </a>
+  </section>
+
+  <section class="how">
+    <h3>How it works</h3>
+    <div class="steps">
+      <div class="step">
+        <span class="n">1</span>
+        <p><strong>Search</strong>Type a medicine name, or pick a blood group.</p>
+      </div>
+      <div class="step">
+        <span class="n">2</span>
+        <p><strong>See what's nearby</strong>Results are pulled from local pharmacies and registered donors, sorted by distance.</p>
+      </div>
+      <div class="step">
+        <span class="n">3</span>
+        <p><strong>Call or go</strong>Contact them directly — no waiting on a callback.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="footer-note">Built for Innovik 6.0 by Team PulseCode</p>
+
+   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  
+</body>
+</html>
