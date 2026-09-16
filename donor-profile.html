@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donor Profile — PulseFind</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .profile-wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2.25rem 1.25rem 3.5rem;
+    flex: 1;
+    width: 100%;
+  }
+  .setup-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-soft);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    margin-bottom: 0.75rem;
+  }
+  .privacy-box {
+    background: rgba(46, 125, 50, 0.07);
+    border: 1px solid rgba(46, 125, 50, 0.2);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    font-size: 0.84rem;
+    color: #1b5e20;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+  .loc-badge {
+    font-size: 0.82rem;
+    color: var(--stock-ok);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+  }
+</style>
+</head>
+<body class="auth-pending">
+
+  <div class="topbar">
+    <a href="index.html" class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      PulseFind
+    </a>
+    <nav>
+      <a href="donor.html" id="dash-link" hidden>Dashboard</a>
+      <a href="login.html" id="sign-out-btn">Sign out</a>
+    </nav>
+  </div>
+
+  <main class="profile-wrap">
+    <div class="card">
+      <div class="setup-badge" id="setup-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span id="badge-text">Profile Setup &bull; Step 2 of 2</span>
+      </div>
+      
+      <h1 id="page-title" style="font-size: 1.6rem; margin-bottom: 0.35rem;">Complete your donor profile</h1>
+      <p id="page-sub" style="color: var(--muted); font-size: 0.92rem; margin-bottom: 1.25rem;">
+        Register your blood group and locality so patients and hospitals in your area can connect with you during emergencies.
+      </p>
+
+      <div class="privacy-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <div>
+          <strong>Privacy Protected:</strong> Your exact street address is never requested or shown. You can toggle your availability OFF anytime from your dashboard whenever you are unavailable.
+        </div>
+      </div>
+
+      <form id="donor-profile-form">
+        
+        <div class="field-row">
+          <div class="field">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" placeholder="e.g. Ramesh Kumar" required>
+          </div>
+          <div class="field">
+            <label for="bloodGroup">Blood Group *</label>
+            <select id="bloodGroup" required>
+              <option value="">Select blood group</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option>
+              <option>O+</option><option>O-</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" placeholder="88999 24881" required>
+          </div>
+          <div class="field">
+            <label for="area">Locality / Area *</label>
+            <input type="text" id="area" placeholder="e.g. Palasia, Indore" required>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="preferredContact">Preferred Contact Method</label>
+            <select id="preferredContact">
+              <option value="call">Direct Phone Call</option>
+              <option value="whatsapp">WhatsApp / Chat</option>
+              <option value="any" selected>Any (Call or WhatsApp)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="travelDistance">Travel Willingness</label>
+            <select id="travelDistance">
+              <option value="5 km">Within 5 km</option>
+              <option value="10 km" selected>Within 10 km</option>
+              <option value="20 km">Within 20 km</option>
+              <option value="Anywhere in city">Anywhere in city</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="age">Age (optional)</label>
+            <input type="number" id="age" min="18" max="65" placeholder="e.g. 26">
+          </div>
+          <div class="field">
+            <label for="lastDonation">Last Donation (optional)</label>
+            <input type="text" id="lastDonation" placeholder="e.g. 3 months ago (or 'First time')">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="bio">Short Bio / Availability Notes (optional)</label>
+          <textarea id="bio" rows="2" placeholder="e.g. Available on short notice on weekends and evenings. Healthy and eligible."></textarea>
+        </div>
+
+        <div class="field" style="background: var(--bg-soft); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <label style="margin-bottom: 0.1rem;">Your Proximity Coordinates</label>
+              <p class="field-help" id="loc-status">Used to match you with nearby patients in your locality.</p>
+            </div>
+            <button type="button" id="detect-loc-btn" class="btn btn-sm btn-outline-dark">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+              Auto-detect GPS
+            </button>
+          </div>
+        </div>
+
+        <div id="form-error" class="status-out" style="display: none; padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.88rem;"></div>
+
+        <button type="submit" class="btn btn-primary" id="save-btn" style="width: 100%; padding: 0.95rem; font-size: 1.05rem;">
+          Save & Go to Donor Dashboard &rsaquo;
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Global Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col footer-brand-col">
+        <a href="index.html" class="footer-brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          PulseFind
+        </a>
+        <p class="footer-desc">Find medicines nearby. Connect with blood donors when it matters.</p>
+        <div class="footer-trust-badge">
+          <span class="pulse-dot"></span> Emergency Healthcare Network
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="search.html?tab=medicine">Find Medicine</a></li>
+          <li><a href="search.html?tab=blood">Find Blood</a></li>
+          <li><a href="login.html">Login / Account</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pharmacies</h4>
+        <ul>
+          <li><a href="login.html">Pharmacy Login / Dashboard</a></li>
+          <li><a href="login.html?signup=pharmacy">Register Pharmacy</a></li>
+        </ul>
+
+        <h4 style="margin-top: 1.25rem;">Blood Donors</h4>
+        <ul>
+          <li><a href="login.html">Donor Login / Dashboard</a></li>
+          <li><a href="login.html?signup=donor">Register as Donor</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:samimanzoor700@gmail.com">samimanzoor700@gmail.com</a>
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+918899924881">+91 88999 24881</a>
+          </li>
+        </ul>
+        <p class="footer-contact-note">Emergency healthcare coordination platform.</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <p>&copy; 2026 PulseFind. All rights reserved.</p>
+        <p>Built for Innovik 6.0 by Team PulseCode</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <script>
+    let currentUid = null;
+    let donorLat = null;
+    let donorLng = null;
+
+    const form = document.getElementById('donor-profile-form');
+    const saveBtn = document.getElementById('save-btn');
+    const formError = document.getElementById('form-error');
+    const locStatus = document.getElementById('loc-status');
+    const detectLocBtn = document.getElementById('detect-loc-btn');
+    const dashLink = document.getElementById('dash-link');
+
+    // Sign out handler
+    document.getElementById('sign-out-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      auth.signOut().then(() => { window.location.replace('login.html'); });
+    });
+
+    // Detect GPS
+    detectLocBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        locStatus.textContent = 'Geolocation is not supported by your browser.';
+        return;
+      }
+      locStatus.textContent = 'Detecting coordinates…';
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          donorLat = pos.coords.latitude;
+          donorLng = pos.coords.longitude;
+          locStatus.innerHTML = `<span class="loc-badge">✓ Coordinates recorded (${donorLat.toFixed(4)}, ${donorLng.toFixed(4)})</span>`;
+        },
+        (err) => {
+          locStatus.textContent = 'Could not fetch GPS automatically. Fallback coordinates will be used.';
+        },
+        { timeout: 8000 }
+      );
+    });
+
+    let guardExecuted = false;
+
+    const VERIFICATION_GRACE_PERIOD_MS = 15000;
+
+    function getRecentVerificationGrace() {
+      const raw = sessionStorage.getItem('pulsefind_verification_complete');
+      if (!raw) return { isRecent: false, remainingMs: 0 };
+      const ts = parseInt(raw, 10);
+      if (isNaN(ts)) {
+        return { isRecent: raw === 'true', remainingMs: VERIFICATION_GRACE_PERIOD_MS };
+      }
+      const elapsed = Date.now() - ts;
+      if (elapsed >= 0 && elapsed < VERIFICATION_GRACE_PERIOD_MS) {
+        return { isRecent: true, remainingMs: VERIFICATION_GRACE_PERIOD_MS - elapsed };
+      }
+      return { isRecent: false, remainingMs: 0 };
+    }
+
+    async function fetchAuthoritativeUserData(uid, delayMs = 600) {
+      const grace = getRecentVerificationGrace();
+      // If verification was completed recently, allocate remaining grace period into attempts
+      const attempts = grace.isRecent ? Math.max(3, Math.ceil(grace.remainingMs / delayMs)) : 2;
+
+      let lastUserData = {};
+      let lastServerReadSuccess = false;
+
+      for (let i = 0; i < attempts; i++) {
+        try {
+          const uSnap = await db.collection('users').doc(uid).get({ source: 'server' });
+          if (uSnap.exists) {
+            lastServerReadSuccess = true;
+            const data = uSnap.data() || {};
+            lastUserData = data;
+            if (data.phoneVerified === true || data.emailVerified === true) {
+              return { exists: true, data, isVerified: true, definitive: true };
+            }
+          }
+        } catch (err) {
+          console.warn(`Firestore server fetch attempt ${i + 1} failed:`, err);
+        }
+
+        try {
+          const dSnap = await db.collection('donors').doc(uid).get({ source: 'server' });
+          if (dSnap.exists) {
+            lastServerReadSuccess = true;
+            const data = dSnap.data() || {};
+            if (data.phoneVerified === true || data.emailVerified === true) {
+              return { exists: true, data, isVerified: true, roleOverride: 'donor', definitive: true };
+            }
+          }
+        } catch (err) {}
+
+        if (i < attempts - 1) {
+          await new Promise(r => setTimeout(r, delayMs));
+        }
+      }
+
+      // If within recent verification grace window, do not treat delay in replication as unverified
+      if (grace.isRecent) {
+        console.info('Within recent verification grace window; treating verification as in-flight.');
+        return { exists: true, data: lastUserData, isVerified: true, graceActive: true };
+      }
+
+      // Fallback read for non-recent verification (only when grace period has completely elapsed)
+      try {
+        const fallbackSnap = await db.collection('users').doc(uid).get();
+        if (fallbackSnap.exists) {
+          const data = fallbackSnap.data() || {};
+          const isVerified = data.phoneVerified === true || data.emailVerified === true;
+          return { exists: true, data, isVerified, definitive: lastServerReadSuccess };
+        }
+      } catch (err) {}
+
+      return { exists: false, data: lastUserData, isVerified: false, definitive: lastServerReadSuccess };
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+      if (guardExecuted) return;
+
+      if (!user) {
+        window.location.replace('login.html');
+        return;
+      }
+
+      guardExecuted = true;
+      currentUid = user.uid;
+
+      try {
+        const { exists, data: userData, isVerified, roleOverride } = await fetchAuthoritativeUserData(user.uid);
+        let role = roleOverride || userData.role;
+
+        // If role not yet in users collection, check donors/pharmacies collections
+        if (!role) {
+          const donorCheck = await db.collection('donors').doc(user.uid).get();
+          if (donorCheck && donorCheck.exists) {
+            role = 'donor';
+          } else {
+            const pharmCheck = await db.collection('pharmacies').doc(user.uid).get();
+            if (pharmCheck && pharmCheck.exists) {
+              role = 'pharmacy';
+            }
+          }
+        }
+
+        // If pharmacy, route to pharmacy profile
+        if (role === 'pharmacy') {
+          window.location.replace('pharmacy-profile.html');
+          return;
+        }
+
+        const isLocalVerified = localStorage.getItem('pulsefind_phone_verified_' + user.uid) === 'true' ||
+                                sessionStorage.getItem('pulsefind_phone_verified_' + user.uid) === 'true';
+        const authVerified = user.emailVerified === true;
+        const verified = isVerified || authVerified || isLocalVerified;
+
+        if (!verified) {
+          sessionStorage.removeItem('pulsefind_verification_complete');
+          sessionStorage.removeItem('pulsefind_phone_verified_' + user.uid);
+          if (userData.phone) {
+            sessionStorage.setItem('pulsefind_pending_phone', userData.phone);
+          }
+          window.location.replace('verify-email.html');
+          return;
+        }
+
+        // Successfully confirmed verification from server/session!
+        localStorage.setItem('pulsefind_phone_verified_' + user.uid, 'true');
+        sessionStorage.setItem('pulsefind_phone_verified_' + user.uid, 'true');
+        sessionStorage.removeItem('pulsefind_pending_phone');
+
+        dashLink.hidden = false;
+        document.body.classList.remove('auth-pending');
+
+        if (userData.name) document.getElementById('name').value = userData.name;
+        if (userData.phone) document.getElementById('phone').value = userData.phone;
+        if (userData.area) document.getElementById('area').value = userData.area;
+
+        // Load existing donor document
+        const donorDoc = await db.collection('donors').doc(user.uid).get();
+        if (donorDoc.exists) {
+          const data = donorDoc.data();
+          if (data.profileComplete) {
+            document.getElementById('badge-text').textContent = 'Edit Profile Details';
+            document.getElementById('page-title').textContent = 'Manage Donor Profile';
+            document.getElementById('page-sub').textContent = 'Update your contact details and availability preferences.';
+            saveBtn.textContent = 'Save Profile Changes';
+          }
+          if (data.name) document.getElementById('name').value = data.name;
+          if (data.bloodGroup) document.getElementById('bloodGroup').value = data.bloodGroup;
+          if (data.phone) document.getElementById('phone').value = data.phone;
+          if (data.area) document.getElementById('area').value = data.area;
+          if (data.preferredContact) document.getElementById('preferredContact').value = data.preferredContact;
+          if (data.travelDistance) document.getElementById('travelDistance').value = data.travelDistance;
+          if (data.age) document.getElementById('age').value = data.age;
+          if (data.lastDonation) document.getElementById('lastDonation').value = data.lastDonation;
+          if (data.bio) document.getElementById('bio').value = data.bio;
+
+          if (typeof data.lat === 'number' && typeof data.lng === 'number') {
+            donorLat = data.lat;
+            donorLng = data.lng;
+            locStatus.innerHTML = `<span class="loc-badge">✓ Coordinates recorded (${donorLat.toFixed(4)}, ${donorLng.toFixed(4)})</span>`;
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        document.body.classList.remove('auth-pending');
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!currentUid) return;
+
+      formError.style.display = 'none';
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving profile…';
+
+      const name = document.getElementById('name').value.trim();
+      const bloodGroup = document.getElementById('bloodGroup').value;
+      const phone = document.getElementById('phone').value.trim();
+      const area = document.getElementById('area').value.trim();
+      const preferredContact = document.getElementById('preferredContact').value;
+      const travelDistance = document.getElementById('travelDistance').value;
+      const age = document.getElementById('age').value ? parseInt(document.getElementById('age').value) : null;
+      const lastDonation = document.getElementById('lastDonation').value.trim();
+      const bio = document.getElementById('bio').value.trim();
+
+      const lat = typeof donorLat === 'number' ? donorLat : 22.7196;
+      const lng = typeof donorLng === 'number' ? donorLng : 75.8577;
+
+      const profilePayload = {
+        name,
+        bloodGroup,
+        phone,
+        area,
+        preferredContact,
+        travelDistance,
+        age,
+        lastDonation,
+        bio,
+        lat,
+        lng,
+        available: true,
+        profileComplete: true,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      const userPayload = {
+        name,
+        phone,
+        area,
+        profileComplete: true
+      };
+
+      Promise.all([
+        db.collection('donors').doc(currentUid).set(profilePayload, { merge: true }),
+        db.collection('users').doc(currentUid).set(userPayload, { merge: true })
+      ]).then(() => {
+        localStorage.setItem('pulsefind_phone_verified_' + currentUid, 'true');
+        sessionStorage.setItem('pulsefind_phone_verified_' + currentUid, 'true');
+        sessionStorage.setItem('pulsefind_verification_complete', String(Date.now()));
+        sessionStorage.removeItem('pulsefind_pending_phone');
+        window.location.replace('donor.html');
+      }).catch((err) => {
+        console.error('Failed to save donor profile:', err);
+        formError.textContent = 'Could not save profile: ' + err.message;
+        formError.style.display = 'block';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save & Proceed';
+      });
+    });
+  </script>
+</body>
+</html>

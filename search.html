@@ -3,66 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Search — PulseFind</title>
+<title>Search Medicines & Blood Donors — PulseFind</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   .search-panel {
-    background: var(--navy);
-    padding: 1.75rem 1.5rem 2.25rem;
+    background: linear-gradient(175deg, #0B1D3A 0%, #16213E 100%);
+    padding: 2.25rem 1.5rem 2.75rem;
+    color: var(--white);
   }
-  .search-panel-inner { max-width: 720px; margin: 0 auto; }
+  .search-panel-inner { max-width: 760px; margin: 0 auto; }
   .search-panel h1 {
     color: var(--white);
-    font-size: 1.6rem;
+    font-size: 1.75rem;
     margin-bottom: 1.1rem;
+    letter-spacing: -0.01em;
   }
 
   .mode-tabs {
     display: inline-flex;
-    background: rgba(247, 244, 236, 0.08);
-    border-radius: 8px;
-    padding: 0.25rem;
-    margin-bottom: 1rem;
+    background: rgba(250, 248, 245, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    padding: 0.3rem;
+    margin-bottom: 1.1rem;
   }
   .mode-tab {
     border: none;
     background: transparent;
-    color: rgba(247, 244, 236, 0.7);
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 0.55rem 1.1rem;
-    border-radius: 6px;
+    color: rgba(250, 248, 245, 0.8);
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 0.55rem 1.25rem;
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    transition: all 0.15s ease;
   }
   .mode-tab[aria-selected="true"] {
     background: var(--gold);
     color: var(--navy);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
   .search-row {
     display: flex;
-    gap: 0.6rem;
+    gap: 0.65rem;
   }
-  .search-row input, .search-row select { flex: 1; }
+  .search-row input, .search-row select {
+    flex: 1;
+    font-size: 1.02rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius-md);
+  }
   .search-row button {
     background: var(--gold);
     color: var(--navy);
-    font-weight: 600;
-    padding: 0 1.4rem;
-    border-radius: 8px;
+    font-weight: 700;
+    padding: 0 1.6rem;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(201, 162, 39, 0.3);
   }
   .search-row button:hover { background: var(--gold-light); }
 
+  /* Quick suggestion pills */
+  .quick-chips {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.85rem;
+    flex-wrap: wrap;
+  }
+  .quick-label {
+    font-size: 0.78rem;
+    color: rgba(250, 248, 245, 0.65);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .chip {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.22rem 0.65rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .chip:hover {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+  }
+
   .location-line {
-    color: rgba(247, 244, 236, 0.65);
-    font-size: 0.85rem;
-    margin-top: 0.75rem;
+    color: rgba(250, 248, 245, 0.75);
+    font-size: 0.86rem;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
   }
   .location-line button {
     background: none;
     border: none;
     color: var(--gold-light);
-    font-size: 0.85rem;
+    font-size: 0.86rem;
+    font-weight: 600;
     padding: 0;
     text-decoration: underline;
     cursor: pointer;
@@ -72,54 +121,81 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    margin-bottom: 1rem;
+    margin-bottom: 1.1rem;
   }
-  .results-header h2 { font-size: 1.1rem; color: var(--navy-ink); }
-  .results-header span { color: var(--muted); font-size: 0.85rem; }
+  .results-header h2 { font-size: 1.25rem; color: var(--navy); }
+  .results-header span { color: var(--muted); font-size: 0.88rem; font-weight: 500; }
 
   .field-group[hidden] { display: none; }
 
   .empty-state {
     text-align: center;
-    padding: 3rem 1rem;
+    padding: 3.5rem 1rem;
     color: var(--muted);
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--border);
+    margin: 1.5rem 0;
+  }
+  .empty-state svg {
+    width: 48px;
+    height: 48px;
+    color: var(--muted-light);
+    margin-bottom: 0.85rem;
   }
   .empty-state[hidden] { display: none; }
 
-  .directory-row .meta a {
-    color: var(--navy);
-    font-weight: 600;
-    text-decoration: underline;
+  /* Map container */
+  .map-card {
+    margin-bottom: 1.75rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
   }
-  .directory-row .contact-links .no-phone {
+  #map {
+    height: 310px;
+    width: 100%;
+    z-index: 1;
+  }
+  .map-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    font-size: 0.84rem;
     color: var(--muted);
-    font-weight: 400;
-    text-decoration: none;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--border-subtle);
   }
+  .map-footer strong { color: var(--navy); }
 </style>
 </head>
 <body>
 
   <div class="topbar">
-    <a href="index.html" class="brand">PulseFind</a>
+    <a href="index.html" class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      PulseFind
+    </a>
     <nav>
-      <a href="donor.html">Become a donor</a>
-      <a href="login.html">Sign in</a>
+      <a href="login.html" class="nav-badge">Register / Sign in</a>
     </nav>
   </div>
 
   <section class="search-panel">
     <div class="search-panel-inner">
-      <h1>What are you looking for?</h1>
+      <h1>Find verified healthcare nearby</h1>
 
       <div class="mode-tabs" role="tablist" aria-label="Search type">
-        <button class="mode-tab" role="tab" aria-selected="true" id="tab-medicine">Medicine</button>
-        <button class="mode-tab" role="tab" aria-selected="false" id="tab-blood">Blood group</button>
+        <button class="mode-tab" role="tab" aria-selected="true" id="tab-medicine">💊 Medicines</button>
+        <button class="mode-tab" role="tab" aria-selected="false" id="tab-blood">🩸 Blood Donors</button>
       </div>
 
       <form id="search-form">
         <div class="search-row field-group" id="field-medicine">
-          <input type="text" id="medicine-input" placeholder="e.g. Paracetamol 650" aria-label="Medicine name">
+          <input type="text" id="medicine-input" placeholder="Type medicine name (e.g. Paracetamol, Insulin, Dolo)..." aria-label="Medicine name">
           <button type="submit">Search</button>
         </div>
         <div class="search-row field-group" id="field-blood" hidden>
@@ -130,9 +206,30 @@
             <option>AB+</option><option>AB-</option>
             <option>O+</option><option>O-</option>
           </select>
-          <button type="submit">Search</button>
+          <button type="submit">Find Donors</button>
         </div>
       </form>
+
+      <!-- Quick suggestion chips -->
+      <div class="quick-chips" id="quick-med-chips">
+        <span class="quick-label">Popular:</span>
+        <button type="button" class="chip" data-query="Paracetamol 650">Paracetamol 650</button>
+        <button type="button" class="chip" data-query="Insulin">Insulin</button>
+        <button type="button" class="chip" data-query="Amoxicillin">Amoxicillin</button>
+        <button type="button" class="chip" data-query="Dolo 650">Dolo 650</button>
+        <button type="button" class="chip" data-query="Combiflam">Combiflam</button>
+        <button type="button" class="chip" data-query="ORS">ORS</button>
+      </div>
+
+      <div class="quick-chips" id="quick-blood-chips" style="display: none;">
+        <span class="quick-label">Filter Group:</span>
+        <button type="button" class="chip" data-group="O+">O+</button>
+        <button type="button" class="chip" data-group="A+">A+</button>
+        <button type="button" class="chip" data-group="B+">B+</button>
+        <button type="button" class="chip" data-group="AB+">AB+</button>
+        <button type="button" class="chip" data-group="O-">O-</button>
+        <button type="button" class="chip" data-group="A-">A-</button>
+      </div>
 
       <p class="location-line" id="location-line">
         Getting your location…
@@ -146,46 +243,151 @@
       <span id="results-count"></span>
     </div>
 
+    <!-- Interactive Leaflet Map -->
+    <div class="map-card" id="map-wrap">
+      <div id="map"></div>
+      <div class="map-footer">
+        <span id="map-legend">📍 Your current location</span>
+        <span id="map-counter"></span>
+      </div>
+    </div>
+
     <div id="medicine-results"></div>
     <div id="blood-results" hidden></div>
 
     <div class="empty-state" id="empty-state" hidden>
-      <p id="empty-state-text">No results yet — try a different search or widen your area.</p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m8 11 6 0"/></svg>
+      <p id="empty-state-text" style="font-size: 1rem; color: var(--navy); font-weight: 600;">No nearby results found</p>
+      <p style="font-size: 0.88rem; margin-top: 0.35rem;">Try searching for generic drug names or selecting another blood group.</p>
     </div>
 
     <div id="request-cta" hidden style="margin-top: 2rem;">
-      <p class="section-title">Can't find a donor?</p>
-      <button type="button" id="show-request-form" class="btn-primary">Post an urgent blood request</button>
+      <div class="card" style="background: rgba(201, 162, 39, 0.08); border-color: rgba(201, 162, 39, 0.4);">
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;">Can't find a matching donor?</h3>
+        <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem;">Post an urgent blood request. Registered donors nearby will be notified on their dashboard.</p>
+        <button type="button" id="show-request-form" class="btn btn-primary">Post an urgent blood request &rsaquo;</button>
 
-      <form id="request-form" hidden style="margin-top: 1rem; display: grid; gap: 1rem; max-width: 480px;">
-        <div class="field">
-          <label for="req-patient">Patient's name</label>
-          <input type="text" id="req-patient" required>
-        </div>
-        <div class="field">
-          <label for="req-phone">Contact phone</label>
-          <input type="tel" id="req-phone" placeholder="10-digit mobile number" required>
-        </div>
-        <div class="field">
-          <label for="req-hospital">Hospital / location</label>
-          <input type="text" id="req-hospital" placeholder="e.g. City Hospital, Vijay Nagar" required>
-        </div>
-        <div class="field">
-          <label for="req-urgency">Urgency</label>
-          <select id="req-urgency">
-            <option value="urgent">Needed urgently</option>
-            <option value="24hr">Needed within 24 hrs</option>
-            <option value="planning">Planning ahead</option>
-          </select>
-        </div>
-        <button type="submit" class="btn-primary" id="req-submit-btn">Post request</button>
-        <p id="request-status" style="display: none; font-size: 0.85rem;"></p>
-      </form>
+        <form id="request-form" hidden style="margin-top: 1.25rem; display: grid; gap: 1rem; max-width: 520px; background: var(--white); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <div class="field" style="margin-bottom:0;">
+            <label for="req-patient">Patient's Name *</label>
+            <input type="text" id="req-patient" placeholder="e.g. Ramesh Verma" required>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="req-bloodgroup">Blood Group Needed *</label>
+            <select id="req-bloodgroup" required>
+              <option value="">Select blood group</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option>
+              <option>O+</option><option>O-</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="req-phone">Contact Mobile Number *</label>
+            <input type="tel" id="req-phone" placeholder="10-digit mobile number" required>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="req-hospital">Hospital Name & City / Area *</label>
+            <input type="text" id="req-hospital" placeholder="e.g. City Hospital, Vijay Nagar, Indore" required>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="req-urgency">Urgency Level *</label>
+            <select id="req-urgency">
+              <option value="urgent">Needed immediately (Emergency)</option>
+              <option value="24hr">Needed within 24 hours</option>
+              <option value="planning">Planning for upcoming surgery</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" id="req-submit-btn">Publish Emergency Request</button>
+          <p id="request-status" style="display: none; font-size: 0.88rem; font-weight: 600;"></p>
+        </form>
+      </div>
     </div>
   </main>
 
-  <p class="footer-note">Built for Innovik 6.0 by Team PulseCode</p>
+  <!-- Listing Detail Modal Dialog -->
+  <div class="modal-backdrop" id="detail-modal" aria-hidden="true" role="dialog">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h2 id="modal-title">Provider Details</h2>
+          <p id="modal-sub" style="font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem;"></p>
+        </div>
+        <button type="button" class="modal-close" id="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Dynamic content injected here -->
+      </div>
+      <div class="modal-foot" id="modal-actions">
+        <!-- Dynamic action buttons injected here -->
+      </div>
+    </div>
+  </div>
 
+  <!-- Global Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col footer-brand-col">
+        <a href="index.html" class="footer-brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          PulseFind
+        </a>
+        <p class="footer-desc">Find medicines nearby. Connect with blood donors when it matters.</p>
+        <div class="footer-trust-badge">
+          <span class="pulse-dot"></span> Emergency Healthcare Network
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="search.html?tab=medicine">Find Medicine</a></li>
+          <li><a href="search.html?tab=blood">Find Blood</a></li>
+          <li><a href="login.html">Login / Account</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pharmacies</h4>
+        <ul>
+          <li><a href="login.html">Pharmacy Login / Dashboard</a></li>
+          <li><a href="login.html?signup=pharmacy">Register Pharmacy</a></li>
+        </ul>
+
+        <h4 style="margin-top: 1.25rem;">Blood Donors</h4>
+        <ul>
+          <li><a href="login.html">Donor Login / Dashboard</a></li>
+          <li><a href="login.html?signup=donor">Register as Donor</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:samimanzoor700@gmail.com">samimanzoor700@gmail.com</a>
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+918899924881">+91 88999 24881</a>
+          </li>
+        </ul>
+        <p class="footer-contact-note">Emergency healthcare coordination platform.</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <p>&copy; 2026 PulseFind. All rights reserved.</p>
+        <p>Built for Innovik 6.0 by Team PulseCode</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -196,6 +398,8 @@
     const tabBlood = document.getElementById('tab-blood');
     const fieldMedicine = document.getElementById('field-medicine');
     const fieldBlood = document.getElementById('field-blood');
+    const quickMedChips = document.getElementById('quick-med-chips');
+    const quickBloodChips = document.getElementById('quick-blood-chips');
     const medicineResults = document.getElementById('medicine-results');
     const bloodResults = document.getElementById('blood-results');
     const resultsTitle = document.getElementById('results-title');
@@ -207,12 +411,144 @@
     const showRequestFormBtn = document.getElementById('show-request-form');
     const requestForm = document.getElementById('request-form');
     const requestStatus = document.getElementById('request-status');
+    const mapLegend = document.getElementById('map-legend');
+    const mapCounter = document.getElementById('map-counter');
+
+    // Modal elements
+    const detailModal = document.getElementById('detail-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalSub = document.getElementById('modal-sub');
+    const modalBody = document.getElementById('modal-body');
+    const modalActions = document.getElementById('modal-actions');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
 
     let currentMode = 'medicine';
-    let userLoc = null; // { lat, lng } or null if unavailable — Indore fallback used either way
+    let userLoc = null;
+    let activeSearchedMedicine = '';
 
-    // Fallback center so a demo still works even if location permission is denied.
     const INDORE_FALLBACK = { lat: 22.7196, lng: 75.8577 };
+
+    // Leaflet Map state
+    let map = null;
+    let userMarker = null;
+    let resultsLayer = null;
+
+    // Cache of full item details
+    let currentResultsCache = [];
+
+    function initMap() {
+      const loc = userLoc || INDORE_FALLBACK;
+      if (!map) {
+        map = L.map('map', { scrollWheelZoom: false }).setView([loc.lat, loc.lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+        resultsLayer = L.layerGroup().addTo(map);
+      } else {
+        map.setView([loc.lat, loc.lng]);
+      }
+      updateUserMarker();
+    }
+
+    function updateUserMarker() {
+      if (!map) return;
+      const loc = userLoc || INDORE_FALLBACK;
+      if (userMarker) {
+        userMarker.setLatLng([loc.lat, loc.lng]);
+      } else {
+        const seekerIcon = L.divIcon({
+          className: 'seeker-pin',
+          html: '<div style="background:#0B1D3A; width:16px; height:16px; border-radius:50%; border:3px solid #E8C468; box-shadow:0 0 0 4px rgba(201,162,39,0.35);"></div>',
+          iconSize: [22, 22],
+          iconAnchor: [11, 11],
+          popupAnchor: [0, -11]
+        });
+        userMarker = L.marker([loc.lat, loc.lng], { icon: seekerIcon }).addTo(map);
+        userMarker.bindPopup('<strong style="font-family:var(--sans); color:var(--navy);">You are here</strong>' + (userLoc ? '' : '<br><small style="color:var(--muted);">(Indore center fallback)</small>'));
+      }
+    }
+
+    function updateMapMarkers(items, type) {
+      if (!map || !resultsLayer) return;
+      resultsLayer.clearLayers();
+
+      const itemsWithLoc = items.filter(it => typeof it.lat === 'number' && typeof it.lng === 'number');
+      const loc = userLoc || INDORE_FALLBACK;
+
+      if (itemsWithLoc.length === 0) {
+        mapLegend.innerHTML = '📍 <strong>Your location</strong>';
+        mapCounter.textContent = 'No locations found on map';
+        map.setView([loc.lat, loc.lng], 13);
+        return;
+      }
+
+      const bounds = L.latLngBounds([[loc.lat, loc.lng]]);
+
+      itemsWithLoc.forEach((it, idx) => {
+        bounds.extend([it.lat, it.lng]);
+        const directionsHref = mapsUrl(it.lat, it.lng, it.address || it.meta);
+
+        let icon;
+        let popupHtml;
+
+        if (type === 'pharmacy') {
+          icon = L.divIcon({
+            className: 'pharmacy-pin',
+            html: `<div style="background:#2E7D32; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.3);">Rx</div>`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+            popupAnchor: [0, -14]
+          });
+          popupHtml = `
+            <div style="font-family:var(--sans); min-width:180px;">
+              <div style="font-weight:700; font-size:0.98rem; color:var(--navy); margin-bottom:2px;">${it.name}</div>
+              <div style="font-size:0.83rem; color:var(--muted); margin-bottom:4px;">${it.meta} &bull; <strong style="color:var(--navy);">${it.distance}</strong></div>
+              <div style="margin-bottom:6px; display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
+                <span class="badge-verified" style="font-size:0.72rem; padding:1px 5px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:11px;height:11px;"><polyline points="20 6 9 17 4 12"/></svg> Email verified</span>
+                <span class="status ${it.status.cls}" style="font-size:0.75rem;">${it.status.text}</span>
+              </div>
+              <div style="font-size:0.85rem; display:flex; gap:10px; font-weight:600; margin-top:6px;">
+                ${it.phone ? `<a href="tel:${it.phone}" style="color:var(--navy);">Call</a>` : ''}
+                <a href="${directionsHref}" target="_blank" rel="noopener" style="color:var(--navy);">Directions</a>
+                <a href="#" onclick="event.preventDefault(); window.openDetailModal(${idx});" style="color:var(--gold); font-weight:700;">Details &rsaquo;</a>
+              </div>
+            </div>
+          `;
+        } else {
+          icon = L.divIcon({
+            className: 'donor-pin',
+            html: `<div style="background:#C62828; color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.3);">${it.bloodGroup || 'BD'}</div>`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+            popupAnchor: [0, -14]
+          });
+          popupHtml = `
+            <div style="font-family:var(--sans); min-width:180px;">
+              <div style="font-weight:700; font-size:0.98rem; color:var(--navy); margin-bottom:2px;">${it.name}</div>
+              <div style="font-size:0.83rem; color:var(--muted); margin-bottom:4px;">${it.meta} &bull; <strong style="color:var(--navy);">${it.distance}</strong></div>
+              <div style="margin-bottom:6px; display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
+                <span class="badge-verified" style="font-size:0.72rem; padding:1px 5px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:11px;height:11px;"><polyline points="20 6 9 17 4 12"/></svg> Email verified</span>
+                <span class="status status-ok" style="font-size:0.75rem;">Available Donor</span>
+              </div>
+              <div style="font-size:0.85rem; display:flex; gap:10px; font-weight:600; margin-top:6px;">
+                ${it.phone ? `<a href="tel:${it.phone}" style="color:var(--navy);">Call</a>` : ''}
+                <a href="#" onclick="event.preventDefault(); window.openDetailModal(${idx});" style="color:var(--gold); font-weight:700;">Details &rsaquo;</a>
+              </div>
+            </div>
+          `;
+        }
+
+        const marker = L.marker([it.lat, it.lng], { icon }).addTo(resultsLayer);
+        marker.bindPopup(popupHtml);
+      });
+
+      map.fitBounds(bounds, { padding: [35, 35], maxZoom: 15 });
+      mapLegend.innerHTML = type === 'pharmacy'
+        ? '🟢 <strong>Pharmacies with stock</strong>'
+        : '🔴 <strong>Available donors</strong>';
+      mapCounter.textContent = `${itemsWithLoc.length} on map`;
+    }
 
     function haversineKm(a, b) {
       const toRad = (deg) => (deg * Math.PI) / 180;
@@ -244,6 +580,7 @@
           ? 'Using your current location &nbsp;<button type="button" id="change-loc">Change</button>'
           : 'Location unavailable — showing results near Indore, MP &nbsp;<button type="button" id="change-loc">Retry</button>';
         document.getElementById('change-loc').addEventListener('click', refreshLocation);
+        initMap();
       });
     }
     refreshLocation();
@@ -255,6 +592,8 @@
       tabBlood.setAttribute('aria-selected', !isMedicine);
       fieldMedicine.hidden = !isMedicine;
       fieldBlood.hidden = isMedicine;
+      quickMedChips.style.display = isMedicine ? 'flex' : 'none';
+      quickBloodChips.style.display = isMedicine ? 'none' : 'flex';
       medicineResults.hidden = !isMedicine;
       bloodResults.hidden = isMedicine;
       resultsTitle.textContent = isMedicine ? 'Search for a medicine' : 'Search for a blood group';
@@ -263,10 +602,35 @@
       bloodResults.innerHTML = '';
       emptyState.hidden = true;
       requestCta.hidden = isMedicine;
+      currentResultsCache = [];
+
+      if (resultsLayer) resultsLayer.clearLayers();
+      if (map && (userLoc || INDORE_FALLBACK)) {
+        const loc = userLoc || INDORE_FALLBACK;
+        map.setView([loc.lat, loc.lng], 13);
+      }
+      mapLegend.innerHTML = '📍 <strong>Your location</strong>';
+      mapCounter.textContent = '';
     }
 
     tabMedicine.addEventListener('click', () => setMode('medicine'));
     tabBlood.addEventListener('click', () => setMode('blood'));
+
+    // Quick chip handlers
+    document.querySelectorAll('#quick-med-chips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.getElementById('medicine-input').value = chip.dataset.query;
+        runMedicineSearch(chip.dataset.query);
+      });
+    });
+
+    document.querySelectorAll('#quick-blood-chips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.getElementById('blood-input').value = chip.dataset.group;
+        runBloodSearch(chip.dataset.group);
+        requestCta.hidden = false;
+      });
+    });
 
     function statusLabel(status) {
       if (status === 'ok') return { cls: 'status-ok', text: 'In stock' };
@@ -281,8 +645,146 @@
       return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fallbackText || '')}`;
     }
 
+    // Modal display function exposed globally for map popups and card clicks
+    window.openDetailModal = function(index) {
+      const item = currentResultsCache[index];
+      if (!item) return;
+
+      modalTitle.textContent = item.name;
+      modalSub.textContent = item.meta + (item.distance !== '—' ? ` • ${item.distance} away` : '');
+      
+      let bodyHtml = '';
+      let actionsHtml = '';
+
+      if (item._kind === 'pharmacy') {
+        const directionsHref = mapsUrl(item.lat, item.lng, item.address || item.meta);
+        const waHref = item.phone ? `https://wa.me/91${item.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello, I saw your pharmacy listing on PulseFind for ${activeSearchedMedicine || 'medicines'}. Is it currently in stock?`)}` : '#';
+        const verifiedTag = item.verified
+          ? '<span class="badge-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg> Verified</span>'
+          : '<span class="badge-unverified" style="font-size:0.8rem; color:var(--muted); background:var(--bg-soft); border:1px solid var(--border); padding:3px 8px; border-radius:12px;">Unverified Profile</span>';
+
+        bodyHtml = `
+          <div class="detail-section">
+            <div class="detail-label">Verification & Status</div>
+            <div class="detail-value" style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+              ${verifiedTag}
+              <span class="status ${item.status.cls}">${item.status.text}</span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-label">Searched Medicine & Stock</div>
+            <div class="detail-value" style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+              <strong>${activeSearchedMedicine || 'Medicine'}</strong>
+              <span class="status ${item.status.cls}">${item.status.text}</span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-label">Store Location & Address</div>
+            <div class="detail-value">${item.address || item.meta || 'Indore, Madhya Pradesh'}</div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-label">Store Hours & Availability</div>
+            <div class="detail-value">
+              <div>⏰ Hours: <strong>${item.openingHours || 'Open standard business hours'}</strong></div>
+              <div style="margin-top:0.25rem;">📅 Days: ${item.closedDays || 'Open all days'}</div>
+              <div style="display:flex; gap:0.4rem; margin-top:0.45rem;">
+                ${item.is24Hours ? '<span class="tag tag-24h">⏰ 24/7 Open</span>' : ''}
+                ${item.hasDelivery ? '<span class="tag tag-delivery">🚚 Home Delivery Available</span>' : ''}
+              </div>
+            </div>
+          </div>
+
+          ${item.services && item.services.length > 0 ? `
+            <div class="detail-section">
+              <div class="detail-label">Services Offered</div>
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.25rem;">
+                ${item.services.map(s => `<span class="tag">${s}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          ${item.description ? `
+            <div class="detail-section">
+              <div class="detail-label">About the Pharmacy</div>
+              <div class="detail-value" style="font-size:0.9rem; color:var(--muted);">${item.description}</div>
+            </div>
+          ` : ''}
+        `;
+
+        actionsHtml = `
+          ${item.phone ? `<a href="tel:${item.phone}" class="btn btn-navy btn-sm">📞 Call ${item.phone}</a>` : ''}
+          ${item.phone ? `<a href="${waHref}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">💬 WhatsApp</a>` : ''}
+          <a href="${directionsHref}" target="_blank" rel="noopener" class="btn btn-outline-dark btn-sm">🗺️ Directions</a>
+        `;
+
+      } else {
+        // Donor detail view
+        const waHref = item.phone ? `https://wa.me/91${item.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello, I found your blood donor profile on PulseFind for group ${item.bloodGroup}. We have an urgent requirement, are you available to help?`)}` : '#';
+        const verifiedTag = item.verified
+          ? '<span class="badge-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg> Verified</span>'
+          : '<span class="badge-unverified" style="font-size:0.8rem; color:var(--muted); background:var(--bg-soft); border:1px solid var(--border); padding:3px 8px; border-radius:12px;">Unverified Donor</span>';
+
+        bodyHtml = `
+          <div class="detail-section">
+            <div class="detail-label">Blood Group & Verification</div>
+            <div class="detail-value" style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+              <span class="blood-badge" style="background:var(--gold); color:var(--navy); font-weight:700; padding:3px 8px; border-radius:6px; font-size:1rem;">${item.bloodGroup}</span>
+              ${verifiedTag}
+              <span class="status status-ok">Available to Donate</span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-label">Locality & Proximity</div>
+            <div class="detail-value">${item.meta} &bull; <strong>${item.distance} away</strong></div>
+            <div class="field-help" style="margin-top:0.25rem;">Willing to travel: <strong>${item.travelDistance ? `${item.travelDistance} km radius` : 'Within city'}</strong></div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-label">Contact Preferences</div>
+            <div class="detail-value">Preferred: <strong>${item.preferredContact === 'call' ? 'Phone Call' : item.preferredContact === 'whatsapp' ? 'WhatsApp' : 'Call or WhatsApp'}</strong></div>
+          </div>
+
+          ${item.bio ? `
+            <div class="detail-section">
+              <div class="detail-label">Donor Bio / Notes</div>
+              <div class="detail-value" style="font-size:0.9rem; color:var(--muted);">${item.bio}</div>
+            </div>
+          ` : ''}
+        `;
+
+        actionsHtml = `
+          ${item.phone ? `<a href="tel:${item.phone}" class="btn btn-navy btn-sm">📞 Call Donor</a>` : ''}
+          ${item.phone ? `<a href="${waHref}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">💬 WhatsApp</a>` : ''}
+        `;
+      }
+
+      modalBody.innerHTML = bodyHtml;
+      modalActions.innerHTML = actionsHtml;
+      detailModal.classList.add('active');
+      detailModal.setAttribute('aria-hidden', 'false');
+    };
+
+    function closeModal() {
+      detailModal.classList.remove('active');
+      detailModal.setAttribute('aria-hidden', 'true');
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal);
+    detailModal.addEventListener('click', (e) => {
+      if (e.target === detailModal) closeModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && detailModal.classList.contains('active')) closeModal();
+    });
+
     function renderRows(container, rows, kind) {
       container.innerHTML = '';
+      currentResultsCache = rows;
+
       if (rows.length === 0) {
         emptyState.hidden = false;
         emptyStateText.textContent = kind === 'medicine'
@@ -291,51 +793,96 @@
         return;
       }
       emptyState.hidden = true;
-      rows.forEach((r) => {
+
+      rows.forEach((r, idx) => {
         const row = document.createElement('div');
         row.className = `directory-row ${r.rowClass}`;
-        const directionsHref = mapsUrl(r.lat, r.lng, r.meta);
+        const directionsHref = mapsUrl(r.lat, r.lng, r.address || r.meta);
+
+        let tagsHtml = '';
+        if (kind === 'medicine') {
+          if (r.is24Hours) tagsHtml += '<span class="tag tag-24h">⏰ 24/7</span>';
+          if (r.hasDelivery) tagsHtml += '<span class="tag tag-delivery">🚚 Delivery</span>';
+        } else {
+          tagsHtml += `<span class="tag tag-blood">🩸 ${r.bloodGroup}</span>`;
+          if (r.travelDistance) tagsHtml += `<span class="tag">📍 ${r.travelDistance} km</span>`;
+        }
+
+        const verifiedBadge = r.verified
+          ? '<span class="badge-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg> Verified</span>'
+          : '';
+
         row.innerHTML = `
           <div class="info">
-            <p class="name">${r.name}</p>
-            <p class="meta">${r.meta} &nbsp;·&nbsp; <span class="status ${r.status.cls}">${r.status.text}</span></p>
-            <p class="meta contact-links">
-              ${r.phone ? `<a href="tel:${r.phone}">Call ${r.phone}</a>` : '<span class="no-phone">No phone number on file</span>'}
-              &nbsp;·&nbsp;
-              <a href="${directionsHref}" target="_blank" rel="noopener">Directions</a>
+            <div class="title-row">
+              <span class="name">${r.name}</span>
+              ${verifiedBadge}
+              <span class="status ${r.status.cls}">${r.status.text}</span>
+            </div>
+            <p class="meta">
+              <span>📍 ${r.meta}</span>
+              ${r.openingHours ? `<span>&bull; ⏰ ${r.openingHours}</span>` : ''}
             </p>
+            ${tagsHtml ? `<div class="tag-row">${tagsHtml}</div>` : ''}
+            <div class="actions-row">
+              ${r.phone ? `<a href="tel:${r.phone}" class="btn btn-navy btn-sm" onclick="event.stopPropagation();">📞 Call</a>` : ''}
+              ${kind === 'medicine' ? `<a href="${directionsHref}" target="_blank" rel="noopener" class="btn btn-outline-dark btn-sm" onclick="event.stopPropagation();">🗺️ Directions</a>` : ''}
+              <button type="button" class="btn btn-outline-dark btn-sm" onclick="event.stopPropagation(); window.openDetailModal(${idx});">View Details &rsaquo;</button>
+            </div>
           </div>
-          <p class="distance">${r.distance}</p>
+          <div class="distance-badge">
+            <p class="distance">${r.distance}</p>
+            <p class="dist-label">Proximity</p>
+          </div>
         `;
+
+        row.addEventListener('click', () => window.openDetailModal(idx));
         container.appendChild(row);
       });
     }
 
     function runMedicineSearch(query) {
-      resultsTitle.textContent = `Pharmacies with "${query}" nearby`;
-      medicineResults.innerHTML = '<p style="color: var(--muted); padding: 1rem 0;">Searching…</p>';
+      activeSearchedMedicine = query.trim();
+      resultsTitle.textContent = `Pharmacies with "${query}" in stock nearby`;
+      medicineResults.innerHTML = '<p style="color: var(--muted); padding: 1.5rem 0; text-align:center;">Searching live pharmacy stock…</p>';
       const q = query.trim().toLowerCase();
 
       db.collection('inventory').get().then((snapshot) => {
+        // Exclude out-of-stock items so seekers only see available stock
         const matches = snapshot.docs
           .map(doc => doc.data())
-          .filter(item => item.name && item.name.toLowerCase().includes(q));
+          .filter(item => item && item.name && item.name.toLowerCase().includes(q) && item.status !== 'out');
 
-        const pharmacyIds = [...new Set(matches.map(m => m.pharmacyId))];
+        const pharmacyIds = [...new Set(matches.map(m => m.pharmacyId).filter(Boolean))];
         return Promise.all(pharmacyIds.map(id => db.collection('pharmacies').doc(id).get()))
           .then((pharmacyDocs) => {
             const pharmacyMap = {};
-            pharmacyDocs.forEach(d => { if (d.exists) pharmacyMap[d.id] = d.data(); });
+            pharmacyDocs.forEach(d => {
+              if (d.exists) {
+                pharmacyMap[d.id] = d.data();
+              }
+            });
 
             const rows = matches
               .filter(m => pharmacyMap[m.pharmacyId])
               .map((m) => {
-                const ph = pharmacyMap[m.pharmacyId];
+                const ph = pharmacyMap[m.pharmacyId] || {};
+                const isVerified = ph.phoneVerified === true || ph.emailVerified === true;
                 const hasLoc = typeof ph.lat === 'number' && typeof ph.lng === 'number';
                 const distKm = hasLoc ? haversineKm(userLoc, { lat: ph.lat, lng: ph.lng }) : Infinity;
                 return {
+                  _kind: 'pharmacy',
                   name: ph.name || 'Pharmacy',
+                  ownerName: ph.ownerName || '',
                   meta: ph.area || '',
+                  address: ph.address || '',
+                  openingHours: ph.openingHours || '',
+                  closedDays: ph.closedDays || '',
+                  description: ph.description || '',
+                  is24Hours: ph.is24Hours || false,
+                  hasDelivery: ph.hasDelivery || false,
+                  services: Array.isArray(ph.services) ? ph.services : [],
+                  verified: isVerified,
                   status: statusLabel(m.status),
                   rowClass: m.status === 'out' ? 'out' : m.status,
                   distance: hasLoc ? `${distKm.toFixed(1)} km` : '—',
@@ -349,6 +896,7 @@
 
             resultsCount.textContent = `${rows.length} result${rows.length === 1 ? '' : 's'}`;
             renderRows(medicineResults, rows, 'medicine');
+            updateMapMarkers(rows, 'pharmacy');
           });
       }).catch((err) => {
         medicineResults.innerHTML = '';
@@ -357,8 +905,8 @@
     }
 
     function runBloodSearch(group) {
-      resultsTitle.textContent = `Donors with ${group} nearby`;
-      bloodResults.innerHTML = '<p style="color: var(--muted); padding: 1rem 0;">Searching…</p>';
+      resultsTitle.textContent = `Registered ${group} donors nearby`;
+      bloodResults.innerHTML = '<p style="color: var(--muted); padding: 1.5rem 0; text-align:center;">Finding nearby available donors…</p>';
 
       db.collection('donors')
         .where('bloodGroup', '==', group)
@@ -368,15 +916,22 @@
           const rows = snapshot.docs
             .map(doc => doc.data())
             .map((d) => {
+              const isVerified = d.phoneVerified === true || d.emailVerified === true;
               const hasLoc = typeof d.lat === 'number' && typeof d.lng === 'number';
               const distKm = hasLoc ? haversineKm(userLoc, { lat: d.lat, lng: d.lng }) : Infinity;
               return {
-                name: d.name || 'Donor',
-                meta: `Registered donor · ${d.area || ''}`,
+                _kind: 'donor',
+                name: d.name || 'Volunteer Donor',
+                meta: d.area || '',
+                bloodGroup: d.bloodGroup || group,
+                phone: d.phone || null,
+                preferredContact: d.preferredContact || 'any',
+                travelDistance: d.travelDistance || '',
+                bio: d.bio || '',
+                verified: isVerified,
                 status: { cls: 'status-ok', text: 'Available' },
                 rowClass: 'ok',
                 distance: hasLoc ? `${distKm.toFixed(1)} km` : '—',
-                phone: d.phone || null,
                 lat: hasLoc ? d.lat : null,
                 lng: hasLoc ? d.lng : null,
                 _dist: distKm,
@@ -384,8 +939,9 @@
             })
             .sort((a, b) => a._dist - b._dist);
 
-          resultsCount.textContent = `${rows.length} result${rows.length === 1 ? '' : 's'}`;
+          resultsCount.textContent = `${rows.length} donor${rows.length === 1 ? '' : 's'}`;
           renderRows(bloodResults, rows, 'blood');
+          updateMapMarkers(rows, 'blood');
         })
         .catch((err) => {
           bloodResults.innerHTML = '';
@@ -409,15 +965,21 @@
 
     showRequestFormBtn.addEventListener('click', () => {
       requestForm.hidden = !requestForm.hidden;
+      if (!requestForm.hidden) {
+        const bloodInput = document.getElementById('blood-input');
+        if (bloodInput && bloodInput.value) {
+          document.getElementById('req-bloodgroup').value = bloodInput.value;
+        }
+      }
     });
 
     requestForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const group = document.getElementById('blood-input').value;
+      const group = document.getElementById('req-bloodgroup').value;
       if (!group) {
         requestStatus.style.display = 'block';
         requestStatus.style.color = 'var(--stock-out)';
-        requestStatus.textContent = 'Select a blood group above first.';
+        requestStatus.textContent = 'Please select a blood group.';
         return;
       }
 
@@ -428,7 +990,7 @@
       const submitBtn = document.getElementById('req-submit-btn');
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Posting…';
+      submitBtn.textContent = 'Publishing request…';
 
       db.collection('blood_requests').add({
         patientName,
@@ -446,17 +1008,25 @@
         requestForm.hidden = true;
         requestStatus.style.display = 'block';
         requestStatus.style.color = 'var(--stock-ok)';
-        requestStatus.textContent = 'Posted — donors with this blood group nearby will see your request.';
+        requestStatus.textContent = '✓ Request published — registered donors in your area will see this on their dashboard.';
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Post request';
+        submitBtn.textContent = 'Publish Emergency Request';
       }).catch((err) => {
         requestStatus.style.display = 'block';
         requestStatus.style.color = 'var(--stock-out)';
         requestStatus.textContent = 'Could not post your request: ' + err.message;
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Post request';
+        submitBtn.textContent = 'Publish Emergency Request';
       });
     });
+
+    // Check tab query parameter for direct tab switching
+    const searchUrlParams = new URLSearchParams(window.location.search);
+    if (searchUrlParams.get('tab') === 'blood') {
+      switchSearchMode('blood');
+    } else if (searchUrlParams.get('tab') === 'medicine') {
+      switchSearchMode('medicine');
+    }
   </script>
 
 </body>

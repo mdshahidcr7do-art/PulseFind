@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-09-16T00:00:00.000Z" agent="PulseFind Architecture Generator" version="24.0.0" type="device">
+  <diagram id="pulsefind-arch-diagram" name="PulseFind System Architecture">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1620" pageHeight="1140" background="#F8FAFC" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ==================== HEADER BANNER ==================== -->
+        <mxCell id="hdr-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#1E293B;shadow=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="20" width="1560" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr-title" value="&lt;font color=&quot;#FFFFFF&quot; style=&quot;font-size: 22px; font-weight: bold; font-family: Segoe UI, sans-serif;&quot;&gt;PulseFind &amp;mdash; System &amp;amp; Software Architecture&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="55" y="28" width="800" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr-subtitle" value="&lt;font color=&quot;#94A3B8&quot; style=&quot;font-size: 13px; font-family: Segoe UI, sans-serif;&quot;&gt;Production Architecture &amp;bull; Vanilla HTML5/CSS3/JavaScript &amp;bull; Firebase Spark Tier (Auth, Cloud Firestore, Hosting) &amp;bull; Leaflet &amp;amp; OSM &amp;bull; Innovik 6.0&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="55" y="55" width="950" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr-badge" value="&lt;font color=&quot;#10B981&quot; style=&quot;font-size: 12px; font-weight: bold;&quot;&gt;&amp;#9679; 100% Spark (Free) Plan &amp;bull; 0 Cloud Functions&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#059669;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1270" y="38" width="295" height="38" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== LAYER 1: USERS & ACTORS ==================== -->
+        <mxCell id="layer-users" value="1. USERS / ACTORS" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=14;fontFamily=Segoe UI;startSize=36;rounded=1;arcSize=4;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="30" y="115" width="270" height="915" as="geometry" />
+        </mxCell>
+
+        <!-- Actor: Medicine Seeker -->
+        <mxCell id="actor-med-seeker" value="&lt;b style=&quot;font-size:13px; color:#0F172A;&quot;&gt;Medicine Seeker / Patient&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot; style=&quot;font-size:11px;&quot;&gt;Public User (No login required)&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:11px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; Searches medicines by name&lt;br&gt;&amp;bull; Shares current geolocation&lt;br&gt;&amp;bull; Views nearest verified pharmacies&lt;br&gt;&amp;bull; Calls / WhatsApps pharmacy&lt;br&gt;&amp;bull; Opens Google Maps directions&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;shadow=1;arcSize=6;spacing=8;" vertex="1" parent="layer-users">
+          <mxGeometry x="15" y="50" width="240" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Actor: Blood Seeker -->
+        <mxCell id="actor-blood-seeker" value="&lt;b style=&quot;font-size:13px; color:#0F172A;&quot;&gt;Blood Seeker / Attendant&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot; style=&quot;font-size:11px;&quot;&gt;Emergency Request Creator&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:11px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; Filters donors by blood group&lt;br&gt;&amp;bull; Checks live availability &amp;amp; distance&lt;br&gt;&amp;bull; Creates emergency blood request&lt;br&gt;&amp;bull; Direct calls verified donors&lt;br&gt;&amp;bull; Reviews donor responses&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#EF4444;shadow=1;arcSize=6;spacing=8;" vertex="1" parent="layer-users">
+          <mxGeometry x="15" y="225" width="240" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Actor: Pharmacy Provider -->
+        <mxCell id="actor-pharmacy" value="&lt;b style=&quot;font-size:13px; color:#0F172A;&quot;&gt;Pharmacy Provider&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#059669&quot; style=&quot;font-size:11px; font-weight:bold;&quot;&gt;Registered Account&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:11px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; Registers with email &amp;amp; phone&lt;br&gt;&amp;bull; Completes native email verification&lt;br&gt;&amp;bull; Completes store profile &amp;amp; location&lt;br&gt;&amp;bull; Real-time inventory CRUD&lt;br&gt;&amp;bull; Toggles stock status (In/Low/Out)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#10B981;shadow=1;arcSize=6;spacing=8;" vertex="1" parent="layer-users">
+          <mxGeometry x="15" y="400" width="240" height="155" as="geometry" />
+        </mxCell>
+
+        <!-- Actor: Blood Donor -->
+        <mxCell id="actor-donor" value="&lt;b style=&quot;font-size:13px; color:#0F172A;&quot;&gt;Blood Donor&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#DC2626&quot; style=&quot;font-size:11px; font-weight:bold;&quot;&gt;Registered Account&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:11px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; Registers with blood group &amp;amp; phone&lt;br&gt;&amp;bull; Completes native email verification&lt;br&gt;&amp;bull; Sets live donation availability toggle&lt;br&gt;&amp;bull; Views matching emergency alerts&lt;br&gt;&amp;bull; Responds &quot;I Can Help&quot; with 1-click&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DC2626;shadow=1;arcSize=6;spacing=8;" vertex="1" parent="layer-users">
+          <mxGeometry x="15" y="580" width="240" height="155" as="geometry" />
+        </mxCell>
+
+        <!-- Actor Note -->
+        <mxCell id="actor-note" value="&lt;b style=&quot;font-size:11px; color:#0F172A;&quot;&gt;Role Separation &amp;amp; Guarding&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot; style=&quot;font-size:10px;&quot;&gt;Seekers access public tools instantly without login. Providers &amp;amp; donors require verified email accounts.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E2E8F0;strokeColor=#CBD5E1;arcSize=6;spacing=6;" vertex="1" parent="layer-users">
+          <mxGeometry x="15" y="755" width="240" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== LAYER 2: FRONTEND ==================== -->
+        <mxCell id="layer-frontend" value="2. PULSEFIND CLIENT APPLICATION (HTML5 / CSS3 / Vanilla JS)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#94A3B8;fontColor=#0F172A;fontStyle=1;fontSize=14;fontFamily=Segoe UI;startSize=36;rounded=1;arcSize=4;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="320" y="115" width="410" height="915" as="geometry" />
+        </mxCell>
+
+        <!-- Module: Landing & Navigation -->
+        <mxCell id="mod-landing" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Landing &amp;amp; Navigation Module&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot; style=&quot;font-size:10px;&quot;&gt;index.html &amp;bull; 404.html&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#475569; margin-top:3px;&quot;&gt;&amp;bull; Hero search shortcuts &amp;amp; emergency triggers&lt;br&gt;&amp;bull; Role awareness links &amp;amp; live network stats&lt;br&gt;&amp;bull; Responsive global footer across all 9 pages&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-frontend">
+          <mxGeometry x="15" y="45" width="380" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- Module: Search & Map Engine -->
+        <mxCell id="mod-search" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Search &amp;amp; Discovery Engine&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#0D9488&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;search.html (Tabs: Medicine | Blood)&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; margin-top:3px;&quot;&gt;&amp;bull; Medicine query matching against pharmacy inventory&lt;br&gt;&amp;bull; Blood group filter &amp;amp; availability query&lt;br&gt;&amp;bull; &lt;b&gt;Client-side Haversine sorting&lt;/b&gt; (distance in km)&lt;br&gt;&amp;bull; Verified badge filter (&lt;b&gt;emailVerified == true&lt;/b&gt;)&lt;br&gt;&amp;bull; Emergency blood request modal with Firestore writer&lt;br&gt;&amp;bull; Detail modal &amp;amp; action triggers (Call / WhatsApp / Maps)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDFA;strokeColor=#0D9488;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-frontend">
+          <mxGeometry x="15" y="130" width="380" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- Sub-module: Leaflet Map Component -->
+        <mxCell id="mod-map" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Interactive Map Component&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#2563EB&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;Leaflet.js Map Controller&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; margin-top:3px;&quot;&gt;&amp;bull; User location pulse marker (Blue)&lt;br&gt;&amp;bull; Dynamic pharmacy markers (Emerald/Stock indicator)&lt;br&gt;&amp;bull; Dynamic blood donor markers (Red/Available indicator)&lt;br&gt;&amp;bull; Custom interactive popups with direct action buttons&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-frontend">
+          <mxGeometry x="15" y="270" width="380" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- Module: Authentication & Native Verification Flow -->
+        <mxCell id="mod-auth" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Auth &amp;amp; Email Verification Module&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#7C3AED&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;login.html &amp;bull; verify-email.html&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; margin-top:3px;&quot;&gt;&amp;bull; Pharmacy &amp;amp; Donor tabbed registration &amp;amp; login&lt;br&gt;&amp;bull; Triggers &lt;b&gt;sendEmailVerification()&lt;/b&gt; on signup&lt;br&gt;&amp;bull; Dedicated verification screen with masked email&lt;br&gt;&amp;bull; Real-time status polling via &lt;b&gt;user.reload()&lt;/b&gt;&lt;br&gt;&amp;bull; Resend link cooldown timer (30s)&lt;br&gt;&amp;bull; Route guards &amp;amp; signOut() handler&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F3FF;strokeColor=#8B5CF6;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-frontend">
+          <mxGeometry x="15" y="375" width="380" height="125" as="geometry" />
+        </mxCell>
+
+        <!-- Module: Profile Onboarding -->
+        <mxCell id="mod-onboarding" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Profile Onboarding &amp;amp; Geocoding&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot; style=&quot;font-size:10px;&quot;&gt;pharmacy-profile.html &amp;bull; donor-profile.html&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; margin-top:3px;&quot;&gt;&amp;bull; Guarded by &lt;b&gt;emailVerified == true&lt;/b&gt;&lt;br&gt;&amp;bull; Captures coordinates (lat/lng), address, city, timing&lt;br&gt;&amp;bull; Donor blood group, availability &amp;amp; donation history&lt;br&gt;&amp;bull; Atomically marks &lt;b&gt;profileComplete: true&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-frontend">
+          <mxGeometry x="15" y="510" width="380" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Module: Pharmacy Dashboard -->
+        <mxCell id="mod-pharm-dash" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Pharmacy Operations Dashboard&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#059669&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;provider-dashboard.html&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; margin-top:3px;&quot;&gt;&amp;bull; Real-time inventory table via &lt;b&gt;onSnapshot()&lt;/b&gt;&lt;br&gt;&amp;bull; Add medicine, update stock status, adjust price/qty&lt;br&gt;&amp;bull; Stock counters (Total, In Stock, Low, Out of Stock)&lt;br&gt;&amp;bull; Store status banner with verified trust indicator&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#10B981;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-frontend">
+          <mxGeometry x="15" y="620" width="380" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Module: Donor Dashboard -->
+        <mxCell id="mod-donor-dash" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Donor Network Dashboard&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#DC2626&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;donor.html&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; margin-top:3px;&quot;&gt;&amp;bull; Live &lt;b&gt;Availability Toggle&lt;/b&gt; synced with Firestore&lt;br&gt;&amp;bull; Real-time matching emergency blood request feed&lt;br&gt;&amp;bull; Distance calculation to hospital / requester location&lt;br&gt;&amp;bull; 1-click &lt;b&gt;&quot;I Can Help&quot;&lt;/b&gt; response recorder&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-frontend">
+          <mxGeometry x="15" y="740" width="380" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend SDK & Architecture Footnote -->
+        <mxCell id="front-tech-badge" value="&lt;b style=&quot;font-size:10px; color:#334155;&quot;&gt;Client Architecture:&lt;/b&gt; Pure SPA/MPA Static Pages &amp;bull; Firebase JS SDK v10.12.2 Compat &amp;bull; Leaflet.js v1.9.4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E2E8F0;strokeColor=#CBD5E1;arcSize=4;spacing=4;" vertex="1" parent="layer-frontend">
+          <mxGeometry x="15" y="860" width="380" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== LAYER 3: FIREBASE BACKEND / DATA ==================== -->
+        <mxCell id="layer-firebase" value="3. FIREBASE BACKEND &amp; DATA PLATFORM (Spark Free Tier)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#F59E0B;fontColor=#0F172A;fontStyle=1;fontSize=14;fontFamily=Segoe UI;startSize=36;rounded=1;arcSize=4;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="750" y="115" width="470" height="915" as="geometry" />
+        </mxCell>
+
+        <!-- Service 1: Firebase Hosting -->
+        <mxCell id="fb-hosting" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Firebase Hosting&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#D97706&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;Global CDN Static Hosting&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#475569; margin-top:2px;&quot;&gt;&amp;bull; Serves HTML, CSS, client-side JS &amp;amp; assets&lt;br&gt;&amp;bull; Configured in &lt;b&gt;firebase.json&lt;/b&gt; (public: &quot;.&quot;)&lt;br&gt;&amp;bull; Free custom domain &amp;amp; automatic SSL&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-firebase">
+          <mxGeometry x="15" y="45" width="440" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- Service 2: Firebase Authentication -->
+        <mxCell id="fb-auth" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Firebase Authentication&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#7C3AED&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;Identity &amp;amp; Native Email Verification Service&lt;/font&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; margin-top:3px;&quot;&gt;&amp;bull; &lt;b&gt;createUserWithEmailAndPassword&lt;/b&gt; / &lt;b&gt;signInWithEmailAndPassword&lt;/b&gt;&lt;br&gt;&amp;bull; &lt;b&gt;sendEmailVerification()&lt;/b&gt;: Sends secure Firebase verification link to email&lt;br&gt;&amp;bull; &lt;b&gt;user.reload()&lt;/b&gt;: Live check for &lt;b&gt;currentUser.emailVerified == true&lt;/b&gt;&lt;br&gt;&amp;bull; Client session persistence &amp;amp; token management (No backend code required)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F3FF;strokeColor=#8B5CF6;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-firebase">
+          <mxGeometry x="15" y="130" width="440" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Service 3: Cloud Firestore Container -->
+        <mxCell id="fb-firestore" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Cloud Firestore (NoSQL Document Database)&lt;/b&gt;" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F59E0B;fontColor=#0F172A;fontStyle=1;fontSize=12;fontFamily=Segoe UI;startSize=26;rounded=1;arcSize=4;shadow=1;" vertex="1" parent="layer-firebase">
+          <mxGeometry x="15" y="240" width="440" height="520" as="geometry" />
+        </mxCell>
+
+        <!-- Collection: users -->
+        <mxCell id="coll-users" value="&lt;b style=&quot;color:#0F172A; font-size:11px;&quot;&gt;Collection: users/{uid}&lt;/b&gt;&lt;div style=&quot;text-align:left; font-size:9px; color:#475569; font-family:Consolas, monospace; margin-top:2px;&quot;&gt;&amp;bull; role: &quot;pharmacy&quot; | &quot;donor&quot;&lt;br&gt;&amp;bull; name, email, phone, area&lt;br&gt;&amp;bull; emailVerified: boolean (synced on verify)&lt;br&gt;&amp;bull; profileComplete: boolean&lt;br&gt;&amp;bull; createdAt: Timestamp&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;arcSize=4;spacing=4;" vertex="1" parent="fb-firestore">
+          <mxGeometry x="10" y="32" width="200" height="105" as="geometry" />
+        </mxCell>
+
+        <!-- Collection: pharmacies -->
+        <mxCell id="coll-pharmacies" value="&lt;b style=&quot;color:#0F172A; font-size:11px;&quot;&gt;Collection: pharmacies/{uid}&lt;/b&gt;&lt;div style=&quot;text-align:left; font-size:9px; color:#475569; font-family:Consolas, monospace; margin-top:2px;&quot;&gt;&amp;bull; name, phone, whatsapp, address&lt;br&gt;&amp;bull; area, city, hours, licenseNumber&lt;br&gt;&amp;bull; lat: number, lng: number&lt;br&gt;&amp;bull; emailVerified: boolean&lt;br&gt;&amp;bull; profileComplete: boolean&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#10B981;arcSize=4;spacing=4;" vertex="1" parent="fb-firestore">
+          <mxGeometry x="220" y="32" width="210" height="105" as="geometry" />
+        </mxCell>
+
+        <!-- Collection: inventory -->
+        <mxCell id="coll-inventory" value="&lt;b style=&quot;color:#0F172A; font-size:11px;&quot;&gt;Collection: inventory/{itemId}&lt;/b&gt;&lt;div style=&quot;text-align:left; font-size:9px; color:#475569; font-family:Consolas, monospace; margin-top:2px;&quot;&gt;&amp;bull; pharmacyId: &quot;{uid}&quot; (foreign key)&lt;br&gt;&amp;bull; pharmacyName: string&lt;br&gt;&amp;bull; medicineName / name: string (indexed)&lt;br&gt;&amp;bull; category, price, quantity&lt;br&gt;&amp;bull; status: &quot;in_stock&quot;|&quot;low_stock&quot;|&quot;out_of_stock&quot;&lt;br&gt;&amp;bull; updatedAt: Timestamp&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#10B981;arcSize=4;spacing=4;" vertex="1" parent="fb-firestore">
+          <mxGeometry x="10" y="145" width="200" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Collection: donors -->
+        <mxCell id="coll-donors" value="&lt;b style=&quot;color:#0F172A; font-size:11px;&quot;&gt;Collection: donors/{uid}&lt;/b&gt;&lt;div style=&quot;text-align:left; font-size:9px; color:#475569; font-family:Consolas, monospace; margin-top:2px;&quot;&gt;&amp;bull; name, phone, bloodGroup (A+, O-, etc.)&lt;br&gt;&amp;bull; available: boolean (live toggle)&lt;br&gt;&amp;bull; area, city, lat: number, lng: number&lt;br&gt;&amp;bull; emailVerified: boolean&lt;br&gt;&amp;bull; profileComplete: boolean&lt;br&gt;&amp;bull; lastDonated: string | null&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF2F2;strokeColor=#EF4444;arcSize=4;spacing=4;" vertex="1" parent="fb-firestore">
+          <mxGeometry x="220" y="145" width="210" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Collection: blood_requests -->
+        <mxCell id="coll-blood-requests" value="&lt;b style=&quot;color:#0F172A; font-size:11px;&quot;&gt;Collection: blood_requests/{reqId}&lt;/b&gt;&lt;div style=&quot;text-align:left; font-size:9px; color:#475569; font-family:Consolas, monospace; margin-top:2px;&quot;&gt;&amp;bull; patientName, hospital, bloodGroup&lt;br&gt;&amp;bull; units, urgency (&quot;emergency&quot;|&quot;critical&quot;|&quot;standard&quot;)&lt;br&gt;&amp;bull; contactPhone, additionalNotes&lt;br&gt;&amp;bull; area, lat: number, lng: number&lt;br&gt;&amp;bull; status: &quot;open&quot; | &quot;fulfilled&quot; | &quot;closed&quot;&lt;br&gt;&amp;bull; createdAt: Timestamp&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#F43F5E;arcSize=4;spacing=4;" vertex="1" parent="fb-firestore">
+          <mxGeometry x="10" y="275" width="200" height="135" as="geometry" />
+        </mxCell>
+
+        <!-- Subcollection: responses -->
+        <mxCell id="coll-responses" value="&lt;b style=&quot;color:#0F172A; font-size:11px;&quot;&gt;Subcollection: {reqId}/responses/{uid}&lt;/b&gt;&lt;div style=&quot;text-align:left; font-size:9px; color:#475569; font-family:Consolas, monospace; margin-top:2px;&quot;&gt;&amp;bull; donorUid: &quot;{uid}&quot;&lt;br&gt;&amp;bull; donorName, donorPhone, bloodGroup&lt;br&gt;&amp;bull; message, status: &quot;offered&quot; | &quot;accepted&quot;&lt;br&gt;&amp;bull; respondedAt: Timestamp&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF1F2;strokeColor=#F43F5E;arcSize=4;spacing=4;" vertex="1" parent="fb-firestore">
+          <mxGeometry x="220" y="275" width="210" height="135" as="geometry" />
+        </mxCell>
+
+        <!-- Firestore Security & Indexing Note -->
+        <mxCell id="fb-security-note" value="&lt;b style=&quot;font-size:10px; color:#0F172A;&quot;&gt;Firestore Security Rules &amp;amp; Indexing Strategy:&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot; style=&quot;font-size:9px;&quot;&gt;&amp;bull; Read-only public access to inventory, pharmacies, and available donors&lt;br&gt;&amp;bull; Write permissions restricted to authenticated &amp;amp; verified owners (auth.uid == resource.data.pharmacyId/uid)&lt;br&gt;&amp;bull; Single-field &amp;amp; composite indexes on (medicineName), (bloodGroup, available)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#F59E0B;arcSize=4;spacing=4;" vertex="1" parent="fb-firestore">
+          <mxGeometry x="10" y="420" width="420" height="85" as="geometry" />
+        </mxCell>
+
+        <!-- Security Guard Callout -->
+        <mxCell id="fb-guard-callout" value="&lt;b style=&quot;font-size:11px; color:#065F46;&quot;&gt;Security &amp;amp; Verification Enforcement&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#047857&quot; style=&quot;font-size:10px;&quot;&gt;&amp;bull; &lt;b&gt;Route Guarding:&lt;/b&gt; Unverified accounts cannot access dashboards / profiles.&lt;br&gt;&amp;bull; &lt;b&gt;Public Search Filter:&lt;/b&gt; Only records with &lt;b&gt;emailVerified == true&lt;/b&gt; are shown in public results with trust badges.&lt;br&gt;&amp;bull; &lt;i&gt;Note: Represents email ownership confirmation, not medical certification.&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF5;strokeColor=#10B981;shadow=0;arcSize=4;spacing=6;" vertex="1" parent="layer-firebase">
+          <mxGeometry x="15" y="770" width="440" height="95" as="geometry" />
+        </mxCell>
+
+        <!-- Firebase Arch Tag -->
+        <mxCell id="fb-tech-badge" value="&lt;b style=&quot;font-size:10px; color:#334155;&quot;&gt;Backend Infrastructure:&lt;/b&gt; Firebase Spark Plan &amp;bull; Zero Cloud Functions &amp;bull; Zero Paid Gateways" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E2E8F0;strokeColor=#CBD5E1;arcSize=4;spacing=4;" vertex="1" parent="layer-firebase">
+          <mxGeometry x="15" y="875" width="440" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== LAYER 4: EXTERNAL SERVICES ==================== -->
+        <mxCell id="layer-external" value="4. EXTERNAL SERVICES &amp; APIS" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#94A3B8;fontColor=#0F172A;fontStyle=1;fontSize=14;fontFamily=Segoe UI;startSize=36;rounded=1;arcSize=4;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="115" width="340" height="915" as="geometry" />
+        </mxCell>
+
+        <!-- Service: Browser Geolocation -->
+        <mxCell id="ext-geo" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Browser Geolocation API&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#2563EB&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;W3C Geolocation Standard&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; &lt;b&gt;navigator.geolocation&lt;/b&gt;&lt;br&gt;&amp;bull; Obtains user's live lat/lng coordinates&lt;br&gt;&amp;bull; Powers client-side Haversine distance calculations&lt;br&gt;&amp;bull; Zero external API calls / Zero quota usage&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#3B82F6;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-external">
+          <mxGeometry x="15" y="50" width="310" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Service: OpenStreetMap -->
+        <mxCell id="ext-osm" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;OpenStreetMap (OSM)&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#059669&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;Free Map Tile Server&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; &lt;b&gt;openstreetmap.org&lt;/b&gt; standard raster tiles&lt;br&gt;&amp;bull; Fetched directly by Leaflet.js in browser&lt;br&gt;&amp;bull; Open-source global geospatial basemap&lt;br&gt;&amp;bull; No API key or billing required&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#10B981;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-external">
+          <mxGeometry x="15" y="195" width="310" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Service: Google Maps Directions -->
+        <mxCell id="ext-gmaps" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Google Maps Directions&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#EA580C&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;External Navigation Deep Link&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; &lt;b&gt;google.com/maps/dir/?api=1&lt;/b&gt;&lt;br&gt;&amp;bull; External turn-by-turn routing to pharmacy/donor&lt;br&gt;&amp;bull; Opens in user's Maps app or new browser tab&lt;br&gt;&amp;bull; &lt;i&gt;Does not power internal search or data&lt;/i&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F97316;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-external">
+          <mxGeometry x="15" y="340" width="310" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Service: WhatsApp & Telephony -->
+        <mxCell id="ext-telephony" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Direct Comms Protocols&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#16A34A&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;WhatsApp &amp;amp; Tel Protocol&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; &lt;b&gt;tel:+91...&lt;/b&gt; instant cellular calling&lt;br&gt;&amp;bull; &lt;b&gt;wa.me/...&lt;/b&gt; pre-filled WhatsApp emergency chat&lt;br&gt;&amp;bull; Direct patient-to-provider / seeker-to-donor link&lt;br&gt;&amp;bull; No SMS gateway required&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-external">
+          <mxGeometry x="15" y="485" width="310" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Service: Email Delivery -->
+        <mxCell id="ext-smtp" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;Firebase Native Mail Delivery&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#7C3AED&quot; style=&quot;font-size:10px; font-weight:bold;&quot;&gt;Managed Identity Mailer&lt;/font&gt;&lt;hr style=&quot;margin:4px 0;&quot;&gt;&lt;div style=&quot;text-align:left; font-size:10px; color:#334155; line-height:1.4;&quot;&gt;&amp;bull; Managed by Google / Firebase Infrastructure&lt;br&gt;&amp;bull; Sends standard secure verification link emails&lt;br&gt;&amp;bull; Zero third-party gateway configurations (No MSG91)&lt;br&gt;&amp;bull; Included in Firebase free Spark tier&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;shadow=1;arcSize=6;spacing=6;" vertex="1" parent="layer-external">
+          <mxGeometry x="15" y="630" width="310" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- External Service Summary Note -->
+        <mxCell id="ext-note" value="&lt;b style=&quot;font-size:11px; color:#0F172A;&quot;&gt;Zero Paid Infrastructure&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot; style=&quot;font-size:10px;&quot;&gt;All mapping, routing, geolocation, and communications rely exclusively on open-source, client-side, or free managed services.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E2E8F0;strokeColor=#CBD5E1;arcSize=6;spacing=6;" vertex="1" parent="layer-external">
+          <mxGeometry x="15" y="775" width="310" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== CONNECTORS / DATA FLOWS ==================== -->
+
+        <!-- 1. Hosting delivery to Frontend -->
+        <mxCell id="flow-hosting" value="Serves static SPA/MPA assets" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;fontSize=10;fontColor=#B45309;fontStyle=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="fb-hosting" target="mod-landing">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 2. Medicine Seeker -> Search Module -->
+        <mxCell id="flow-med-search" value="Medicine search query &amp;amp; filter" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0D9488;strokeWidth=1.5;fontSize=10;fontColor=#0F766E;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor-med-seeker" target="mod-search">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 3. Blood Seeker -> Search Module & Blood Requests -->
+        <mxCell id="flow-blood-search" value="Blood group query &amp;amp; emergency request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EF4444;strokeWidth=1.5;fontSize=10;fontColor=#B91C1C;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.65;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor-blood-seeker" target="mod-search">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 4. Pharmacy -> Auth & Verification -->
+        <mxCell id="flow-pharm-signup" value="Signup / Login &amp;amp; Verify" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=1.5;fontSize=10;fontColor=#047857;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor-pharmacy" target="mod-auth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 5. Pharmacy -> Dashboard -->
+        <mxCell id="flow-pharm-dash" value="Manage inventory &amp;amp; stock status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=1.5;fontSize=10;fontColor=#047857;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor-pharmacy" target="mod-pharm-dash">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 6. Blood Donor -> Auth & Verification -->
+        <mxCell id="flow-donor-signup" value="Signup / Login &amp;amp; Verify" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontSize=10;fontColor=#B91C1C;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.8;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor-donor" target="mod-auth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 7. Blood Donor -> Donor Hub -->
+        <mxCell id="flow-donor-hub" value="Toggle availability &amp;amp; respond" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;fontSize=10;fontColor=#B91C1C;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="actor-donor" target="mod-donor-dash">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 8. Auth Module -> Firebase Auth -->
+        <mxCell id="flow-auth-fb" value="Native Firebase Email Verification &amp;amp; Sessions" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8B5CF6;strokeWidth=1.5;fontSize=10;fontColor=#6D28D9;fontStyle=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mod-auth" target="fb-auth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 9. Firebase Auth -> Native Mail Delivery -->
+        <mxCell id="flow-auth-mail" value="Dispatches verification email" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8B5CF6;strokeWidth=1.5;fontSize=10;fontColor=#6D28D9;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="fb-auth" target="ext-smtp">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1230" y="295" />
+              <mxPoint x="1230" y="805" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 10. Search Engine -> Firestore (Read Inventory & Pharmacies) -->
+        <mxCell id="flow-search-firestore" value="Reads inventory &amp;amp; pharmacies" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0D9488;strokeWidth=1.5;fontSize=10;fontColor=#0F766E;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mod-search" target="coll-inventory">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="284" />
+              <mxPoint x="740" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 11. Search Engine -> Firestore (Read Donors & Post Emergency Requests) -->
+        <mxCell id="flow-search-donors" value="Queries available donors / Adds blood_requests" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EF4444;strokeWidth=1.5;fontSize=10;fontColor=#B91C1C;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mod-search" target="coll-blood-requests">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="336" />
+              <mxPoint x="740" y="698" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 12. Search Module -> Leaflet Map Component -->
+        <mxCell id="flow-search-map" value="Sends coordinates &amp;amp; metadata to map" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=1.5;fontSize=10;fontColor=#1D4ED8;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="layer-frontend" source="mod-search" target="mod-map">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- 13. Leaflet -> OpenStreetMap Tiles -->
+        <mxCell id="flow-map-osm" value="Fetches raster map tiles" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=1.5;fontSize=10;fontColor=#1D4ED8;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mod-map" target="ext-osm">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="432" />
+              <mxPoint x="740" y="105" />
+              <mxPoint x="1235" y="105" />
+              <mxPoint x="1235" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 14. Geolocation -> Frontend (Location) -->
+        <mxCell id="flow-geo-front" value="Current lat/lng for distance" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563EB;strokeWidth=1.5;fontSize=10;fontColor=#1D4ED8;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.15;entryDx=0;entryDy=0;" edge="1" parent="1" source="ext-geo" target="mod-search">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="225" />
+              <mxPoint x="1240" y="100" />
+              <mxPoint x="735" y="100" />
+              <mxPoint x="735" y="265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 15. Frontend Results -> Google Maps Directions -->
+        <mxCell id="flow-front-gmaps" value="External directions link" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EA580C;strokeWidth=1.5;fontSize=10;fontColor=#C2410C;exitX=1;exitY=0.85;exitDx=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mod-search" target="ext-gmaps">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="745" y="355" />
+              <mxPoint x="745" y="95" />
+              <mxPoint x="1245" y="95" />
+              <mxPoint x="1245" y="515" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 16. Frontend Details -> Direct Comms (WhatsApp/Phone) -->
+        <mxCell id="flow-front-comms" value="Direct Call &amp;amp; WhatsApp links" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16A34A;strokeWidth=1.5;fontSize=10;fontColor=#15803D;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="mod-landing" target="ext-telephony">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="745" y="197" />
+              <mxPoint x="745" y="90" />
+              <mxPoint x="1248" y="90" />
+              <mxPoint x="1248" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 17. Pharmacy Dashboard -> Inventory Collection -->
+        <mxCell id="flow-pharm-inventory" value="Real-time Inventory CRUD (onSnapshot / set / update / delete)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=1.5;fontSize=10;fontColor=#047857;fontStyle=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="mod-pharm-dash" target="coll-inventory">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="745" y="790" />
+              <mxPoint x="745" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 18. Donor Hub -> Donors & Responses Collection -->
+        <mxCell id="flow-donor-firestore" value="Updates availability status / Writes responses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EF4444;strokeWidth=1.5;fontSize=10;fontColor=#B91C1C;fontStyle=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" parent="1" source="mod-donor-dash" target="coll-donors">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="745" y="910" />
+              <mxPoint x="745" y="550" />
+              <mxPoint x="975" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ==================== BOTTOM LEGEND ==================== -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#CBD5E1;shadow=1;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1045" width="1560" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="&lt;b style=&quot;font-size:12px; color:#0F172A;&quot;&gt;ARCHITECTURE LEGEND &amp;amp; SYSTEM SPECIFICATIONS:&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1052" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-item1" value="&lt;font color=&quot;#0F172A&quot;&gt;&amp;#9632; User Actors&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1080" width="130" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-item2" value="&lt;font color=&quot;#0F172A&quot;&gt;&amp;#9632; Frontend Modules&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1080" width="140" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-item3" value="&lt;font color=&quot;#B45309&quot;&gt;&amp;#9632; Firebase Services (Spark)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="1080" width="165" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-item4" value="&lt;font color=&quot;#047857&quot;&gt;&amp;#9632; Firestore Collections&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#10B981;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="1080" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-item5" value="&lt;font color=&quot;#1D4ED8&quot;&gt;&amp;#9632; External / Device APIs&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="695" y="1080" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-note" value="&lt;font color=&quot;#64748B&quot; style=&quot;font-size:10px;&quot;&gt;&lt;b&gt;Key Principles:&lt;/b&gt; 100% Spark Free Plan &amp;bull; Zero Cloud Functions &amp;bull; Native Firebase Email Verification &amp;bull; Client-side Haversine Distance Sorting &amp;bull; Real-time Firestore Sync&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="860" y="1065" width="715" height="40" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
