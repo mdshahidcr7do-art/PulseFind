@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Your Email — PulseFind</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body.auth-pending {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body class="auth-pending">
+
+  <div class="topbar">
+    <a href="index.html" class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      PulseFind
+    </a>
+    <nav>
+      <a href="#" id="topbar-signout">Sign out</a>
+    </nav>
+  </div>
+
+  <main class="verify-container">
+    <div class="card verify-card">
+      <div id="verify-form-wrap">
+        <div>
+          <span class="whatsapp-badge">
+            <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-5.46-4.45-9.92-9.91-9.92zm.03 17.15c-1.46 0-2.89-.39-4.14-1.13l-.3-.18-3.08.81.82-3-.19-.31c-.81-1.3-1.24-2.8-1.24-4.34 0-4.47 3.64-8.1 8.13-8.1 2.17 0 4.21.85 5.75 2.38 1.53 1.54 2.38 3.58 2.38 5.75 0 4.48-3.64 8.12-8.13 8.12zm4.46-6.09c-.24-.12-1.45-.71-1.67-.79-.23-.09-.39-.12-.56.12-.17.24-.65.79-.8 1-.15.2-.3.23-.55.12-.24-.12-1.03-.38-1.97-1.21-.73-.65-1.22-1.45-1.36-1.7-.15-.24-.02-.37.11-.49.11-.11.24-.28.36-.43.12-.15.16-.24.24-.4.08-.16.04-.3-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.49-.4-.42-.56-.43h-.47c-.16 0-.43.06-.65.3-.23.24-.87.85-.87 2.07s.89 2.4 1.01 2.57c.12.16 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.53.6.19 1.14.16 1.57.1.48-.07 1.45-.59 1.66-1.16.2-.57.2-1.06.14-1.16-.06-.1-.23-.16-.47-.28z"/></svg>
+            WhatsApp OTP Verification
+          </span>
+        </div>
+
+        <h1 style="font-size: 1.55rem; margin-bottom: 0.35rem; color: var(--navy);">Verify your WhatsApp number</h1>
+        <p style="color: var(--muted); font-size: 0.92rem; margin-bottom: 0.35rem;">
+          We've sent a 6-digit verification code to:
+        </p>
+        
+        <div>
+          <span class="masked-email" id="user-phone-display">Loading phone number…</span>
+        </div>
+
+        <div class="otp-container">
+          <div class="otp-inputs" id="otp-inputs-group">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" data-index="0" autofocus autocomplete="one-time-code">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" data-index="1">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" data-index="2">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" data-index="3">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" data-index="4">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-input" data-index="5">
+          </div>
+
+          <div class="otp-timer" id="otp-timer">
+            Code expires in <strong id="expiry-countdown">05:00</strong>
+          </div>
+        </div>
+
+        <div id="verify-error" class="auth-error" style="display: none; margin-bottom: 1.25rem;"></div>
+        <div id="verify-info" style="display: none; font-size: 0.88rem; color: var(--stock-ok); background: var(--stock-ok-bg); padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); margin-bottom: 1.25rem; line-height: 1.45;"></div>
+
+        <div class="verify-actions">
+          <button type="button" class="btn btn-primary" id="verify-otp-btn" style="padding: 0.95rem; font-size: 1.02rem;" disabled>
+            Verify WhatsApp OTP &rsaquo;
+          </button>
+          <button type="button" class="btn-resend" id="resend-btn">
+            Resend WhatsApp OTP
+          </button>
+        </div>
+
+        <div class="verify-secondary-links">
+          <button type="button" id="signout-btn">Change number / Sign out</button>
+        </div>
+      </div>
+
+      <div id="verify-success-wrap" style="display: none;" class="success-state">
+        <div class="success-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 style="font-size: 1.4rem; color: var(--navy);">✓ WhatsApp Verified!</h2>
+        <p style="color: var(--muted); font-size: 0.92rem;">Redirecting to complete your profile setup…</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Global Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col footer-brand-col">
+        <a href="index.html" class="footer-brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          PulseFind
+        </a>
+        <p class="footer-desc">Find medicines nearby. Connect with blood donors when it matters.</p>
+        <div class="footer-trust-badge">
+          <span class="pulse-dot"></span> Emergency Healthcare Network
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="search.html?tab=medicine">Find Medicine</a></li>
+          <li><a href="search.html?tab=blood">Find Blood</a></li>
+          <li><a href="login.html">Login / Account</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pharmacies</h4>
+        <ul>
+          <li><a href="login.html">Pharmacy Login / Dashboard</a></li>
+          <li><a href="login.html?signup=pharmacy">Register Pharmacy</a></li>
+        </ul>
+
+        <h4 style="margin-top: 1.25rem;">Blood Donors</h4>
+        <ul>
+          <li><a href="login.html">Donor Login / Dashboard</a></li>
+          <li><a href="login.html?signup=donor">Register as Donor</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:samimanzoor700@gmail.com">samimanzoor700@gmail.com</a>
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+918899924881">+91 88999 24881</a>
+          </li>
+        </ul>
+        <p class="footer-contact-note">Emergency healthcare coordination platform.</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <p>&copy; 2026 PulseFind. All rights reserved.</p>
+        <p>Built for Innovik 6.0 by Team PulseCode</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <script>
+    const WORKER_URL = 'https://pulsefind-otp.ritik-choudhary-1-11-2005.workers.dev';
+
+    const verifyBtn = document.getElementById('verify-otp-btn');
+    const resendBtn = document.getElementById('resend-btn');
+    const phoneDisplay = document.getElementById('user-phone-display');
+    const errorBox = document.getElementById('verify-error');
+    const infoBox = document.getElementById('verify-info');
+    const verifyFormWrap = document.getElementById('verify-form-wrap');
+    const verifySuccessWrap = document.getElementById('verify-success-wrap');
+    const expiryCountdown = document.getElementById('expiry-countdown');
+    const otpTimerEl = document.getElementById('otp-timer');
+    const otpInputs = document.querySelectorAll('.otp-input');
+
+    let currentUser = null;
+    let activePhone = '';
+    let resendCooldownTimer = null;
+    let expiryTimer = null;
+    let expirySeconds = 300;
+    let isVerificationInProgress = false;
+    let isVerificationCompleted = false;
+
+    function sanitizePhone(raw) {
+      if (!raw) return '';
+      return String(raw).replace(/\D/g, '').slice(-10);
+    }
+
+    function maskPhone(phone) {
+      const clean = sanitizePhone(phone);
+      if (!clean || clean.length < 10) return phone || '';
+      return `+91 ${clean.slice(0, 2)}*** **${clean.slice(-3)}`;
+    }
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.style.display = 'block';
+      infoBox.style.display = 'none';
+      otpInputs.forEach(input => input.classList.add('error'));
+    }
+
+    function showInfo(message) {
+      infoBox.textContent = message;
+      infoBox.style.display = 'block';
+      errorBox.style.display = 'none';
+      otpInputs.forEach(input => input.classList.remove('error'));
+    }
+
+    function hideMessages() {
+      errorBox.style.display = 'none';
+      infoBox.style.display = 'none';
+      otpInputs.forEach(input => input.classList.remove('error'));
+    }
+
+    function getEnteredCode() {
+      return Array.from(otpInputs).map(i => i.value.trim()).join('');
+    }
+
+    function updateVerifyButtonState() {
+      if (isVerificationInProgress || isVerificationCompleted) return;
+      const code = getEnteredCode();
+      const isComplete = code.length === 6 && /^\d{6}$/.test(code);
+      verifyBtn.disabled = !isComplete;
+    }
+
+    // 6-digit OTP input interaction handlers
+    otpInputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        hideMessages();
+        const val = input.value.replace(/\D/g, '');
+        input.value = val ? val.slice(-1) : '';
+
+        if (input.value && index < otpInputs.length - 1) {
+          otpInputs[index + 1].focus();
+        }
+        updateVerifyButtonState();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace') {
+          if (!input.value && index > 0) {
+            otpInputs[index - 1].focus();
+            otpInputs[index - 1].value = '';
+          } else {
+            input.value = '';
+          }
+          hideMessages();
+          updateVerifyButtonState();
+        } else if (e.key === 'ArrowLeft' && index > 0) {
+          otpInputs[index - 1].focus();
+        } else if (e.key === 'ArrowRight' && index < otpInputs.length - 1) {
+          otpInputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        hideMessages();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text');
+        const digits = pasted.replace(/\D/g, '').slice(0, 6);
+        if (digits) {
+          digits.split('').forEach((d, i) => {
+            if (otpInputs[i]) otpInputs[i].value = d;
+          });
+          const nextIndex = Math.min(digits.length, otpInputs.length - 1);
+          otpInputs[nextIndex].focus();
+          updateVerifyButtonState();
+        }
+      });
+    });
+
+    function startExpiryTimer(duration = 300) {
+      if (isVerificationCompleted) return;
+      if (expiryTimer) clearInterval(expiryTimer);
+      expirySeconds = duration;
+      otpTimerEl.classList.remove('expired');
+
+      function updateDisplay() {
+        const mins = Math.floor(expirySeconds / 60);
+        const secs = expirySeconds % 60;
+        expiryCountdown.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+
+      updateDisplay();
+
+      expiryTimer = setInterval(() => {
+        expirySeconds -= 1;
+        if (expirySeconds <= 0) {
+          clearInterval(expiryTimer);
+          expiryTimer = null;
+          expiryCountdown.textContent = '00:00';
+          otpTimerEl.classList.add('expired');
+          showError('OTP has expired. Please click "Resend WhatsApp OTP" to request a new code.');
+          verifyBtn.disabled = true;
+        } else {
+          updateDisplay();
+        }
+      }, 1000);
+    }
+
+    function startResendCooldown(seconds = 30) {
+      if (isVerificationCompleted) return;
+      let remaining = seconds;
+      resendBtn.disabled = true;
+      resendBtn.textContent = `Resend available in ${remaining}s`;
+
+      if (resendCooldownTimer) clearInterval(resendCooldownTimer);
+      resendCooldownTimer = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          clearInterval(resendCooldownTimer);
+          resendCooldownTimer = null;
+          resendBtn.disabled = false;
+          resendBtn.textContent = 'Resend WhatsApp OTP';
+        } else {
+          resendBtn.textContent = `Resend available in ${remaining}s`;
+        }
+      }, 1000);
+    }
+
+    async function waitForFirestoreVerification(uid, maxRetries = 15, delayMs = 600) {
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+          const docSnap = await db.collection('users').doc(uid).get({ source: 'server' });
+          if (docSnap.exists) {
+            const data = docSnap.data() || {};
+            if (data.phoneVerified === true || data.emailVerified === true) {
+              return { isVerified: true, data };
+            }
+          }
+        } catch (e) {
+          console.warn('Firestore verification polling attempt error (users):', e);
+        }
+
+        try {
+          const pharmSnap = await db.collection('pharmacies').doc(uid).get({ source: 'server' });
+          if (pharmSnap.exists) {
+            const pData = pharmSnap.data() || {};
+            if (pData.phoneVerified === true || pData.emailVerified === true) {
+              return { isVerified: true, data: pData, roleOverride: 'pharmacy' };
+            }
+          }
+        } catch (e) {}
+
+        try {
+          const donorSnap = await db.collection('donors').doc(uid).get({ source: 'server' });
+          if (donorSnap.exists) {
+            const dData = donorSnap.data() || {};
+            if (dData.phoneVerified === true || dData.emailVerified === true) {
+              return { isVerified: true, data: dData, roleOverride: 'donor' };
+            }
+          }
+        } catch (e) {}
+
+        await new Promise(r => setTimeout(r, delayMs));
+      }
+
+      try {
+        const fallbackSnap = await db.collection('users').doc(uid).get();
+        if (fallbackSnap.exists) {
+          const data = fallbackSnap.data() || {};
+          if (data.phoneVerified === true || data.emailVerified === true) {
+            return { isVerified: true, data };
+          }
+        }
+      } catch (e) {}
+
+      return { isVerified: false, data: {} };
+    }
+
+    async function determineUserDestination(uid) {
+      let userData = {};
+      try {
+        let uSnap;
+        try {
+          uSnap = await db.collection('users').doc(uid).get({ source: 'server' });
+        } catch (e) {
+          uSnap = await db.collection('users').doc(uid).get();
+        }
+        if (uSnap && uSnap.exists) {
+          userData = uSnap.data() || {};
+        }
+      } catch (e) {
+        console.warn('Error reading users doc:', e);
+      }
+
+      let role = userData.role;
+      let isComplete = userData.profileComplete === true;
+
+      // Check role-specific collections if role or profileComplete is not yet in users doc
+      if (!role || !isComplete) {
+        try {
+          const pharmSnap = await db.collection('pharmacies').doc(uid).get();
+          if (pharmSnap && pharmSnap.exists) {
+            role = role || 'pharmacy';
+            if (pharmSnap.data() && pharmSnap.data().profileComplete === true) {
+              isComplete = true;
+            }
+          }
+        } catch (e) {}
+
+        if (!role || !isComplete) {
+          try {
+            const donorSnap = await db.collection('donors').doc(uid).get();
+            if (donorSnap && donorSnap.exists) {
+              role = role || 'donor';
+              if (donorSnap.data() && donorSnap.data().profileComplete === true) {
+                isComplete = true;
+              }
+            }
+          } catch (e) {}
+        }
+      }
+
+      role = role || 'pharmacy';
+
+      if (role === 'donor') {
+        return isComplete ? 'donor.html' : 'donor-profile.html';
+      } else {
+        return isComplete ? 'provider-dashboard.html' : 'pharmacy-profile.html';
+      }
+    }
+
+    async function handleVerificationSuccess(user) {
+      if (isVerificationCompleted) return;
+      isVerificationCompleted = true;
+
+      if (expiryTimer) { clearInterval(expiryTimer); expiryTimer = null; }
+      if (resendCooldownTimer) { clearInterval(resendCooldownTimer); resendCooldownTimer = null; }
+
+      verifyFormWrap.style.display = 'none';
+      verifySuccessWrap.style.display = 'flex';
+
+      const activeUser = user || auth.currentUser || currentUser;
+      if (!activeUser) {
+        window.location.replace('login.html');
+        return;
+      }
+
+      // Record verification immediately across session & local storage
+      localStorage.setItem('pulsefind_phone_verified_' + activeUser.uid, 'true');
+      sessionStorage.setItem('pulsefind_phone_verified_' + activeUser.uid, 'true');
+      sessionStorage.setItem('pulsefind_verification_complete', String(Date.now()));
+      sessionStorage.removeItem('pulsefind_pending_phone');
+
+      // Best effort direct update to Firestore
+      db.collection('users').doc(activeUser.uid).update({
+        phoneVerified: true,
+        verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(() => {});
+      db.collection('pharmacies').doc(activeUser.uid).update({
+        phoneVerified: true,
+        verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(() => {});
+      db.collection('donors').doc(activeUser.uid).update({
+        phoneVerified: true,
+        verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(() => {});
+
+      // Wait for server to reflect verification flag authoritatively
+      let verificationResult = await waitForFirestoreVerification(activeUser.uid, 10, 500);
+
+      // If not yet confirmed within initial window, extend polling with progressive feedback
+      if (!verificationResult || !verificationResult.isVerified) {
+        console.warn('Verification not yet propagated to Firestore, extending server polling...');
+        const successMsg = document.querySelector('#verify-success-wrap p');
+        if (successMsg) {
+          successMsg.textContent = 'Confirming verification with server… Please hold on.';
+        }
+        verificationResult = await waitForFirestoreVerification(activeUser.uid, 10, 800);
+      }
+
+      // If still not verified, do not redirect blind and trigger a bounce loop
+      if (!verificationResult || !verificationResult.isVerified) {
+        console.warn('Server verification could not be confirmed in the allocated window.');
+        const successTitle = document.querySelector('#verify-success-wrap h1');
+        const successMsg = document.querySelector('#verify-success-wrap p');
+        if (successTitle) successTitle.textContent = 'Verification in progress';
+        if (successMsg) {
+          successMsg.innerHTML = 'OTP verified, but account confirmation is taking longer than usual.<br><button id="retry-redirect-btn" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">Continue to Dashboard ›</button>';
+          document.getElementById('retry-redirect-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('retry-redirect-btn');
+            btn.disabled = true;
+            btn.textContent = 'Confirming…';
+            localStorage.setItem('pulsefind_phone_verified_' + activeUser.uid, 'true');
+            sessionStorage.setItem('pulsefind_phone_verified_' + activeUser.uid, 'true');
+            sessionStorage.setItem('pulsefind_verification_complete', String(Date.now()));
+            sessionStorage.removeItem('pulsefind_pending_phone');
+            const dest = await determineUserDestination(activeUser.uid);
+            window.location.replace(dest);
+          });
+        }
+        return;
+      }
+
+      // Authoritatively verified! Refresh timestamp and clear pending phone
+      localStorage.setItem('pulsefind_phone_verified_' + activeUser.uid, 'true');
+      sessionStorage.setItem('pulsefind_phone_verified_' + activeUser.uid, 'true');
+      sessionStorage.setItem('pulsefind_verification_complete', String(Date.now()));
+      sessionStorage.removeItem('pulsefind_pending_phone');
+
+      // Determine accurate destination based on role and profile completion
+      const destination = await determineUserDestination(activeUser.uid);
+
+      setTimeout(() => {
+        window.location.replace(destination);
+      }, 500);
+    }
+
+    // Verify WhatsApp OTP button handler
+    verifyBtn.addEventListener('click', async () => {
+      if (isVerificationInProgress || isVerificationCompleted) return;
+
+      const code = getEnteredCode();
+      if (code.length !== 6 || !/^\d{6}$/.test(code)) {
+        showError('Please enter the complete 6-digit OTP received on WhatsApp.');
+        return;
+      }
+
+      if (!activePhone) {
+        showError('No phone number found for verification. Please sign in again.');
+        return;
+      }
+
+      hideMessages();
+      isVerificationInProgress = true;
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying code…';
+
+      try {
+        const res = await fetch(`${WORKER_URL}/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: activePhone,
+            code: code
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.error || 'Verification failed. Please check the OTP and try again.');
+        }
+
+        sessionStorage.setItem('pulsefind_verification_complete', String(Date.now()));
+
+        const user = auth.currentUser || currentUser;
+        if (user) {
+          await user.getIdToken(true).catch(() => {});
+        }
+        await handleVerificationSuccess(user);
+      } catch (err) {
+        console.error('OTP Verification error:', err);
+        isVerificationInProgress = false;
+        showError(err.message || 'Incorrect OTP or verification expired. Please try again.');
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify WhatsApp OTP ›';
+        updateVerifyButtonState();
+      }
+    });
+
+    // Resend WhatsApp OTP button handler
+    resendBtn.addEventListener('click', async () => {
+      if (isVerificationInProgress || isVerificationCompleted) return;
+
+      if (!activePhone) {
+        showError('No phone number found. Please sign in again.');
+        return;
+      }
+
+      const user = auth.currentUser || currentUser;
+      if (!user) {
+        showError('Session expired. Please sign in again.');
+        window.location.replace('login.html');
+        return;
+      }
+
+      hideMessages();
+      resendBtn.disabled = true;
+      resendBtn.textContent = 'Sending WhatsApp OTP…';
+
+      try {
+        const idToken = await user.getIdToken(true);
+
+        const res = await fetch(`${WORKER_URL}/send-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: activePhone,
+            idToken: idToken
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.error || 'Could not send OTP. Please try again.');
+        }
+
+        showInfo('A new 6-digit verification code has been sent to your WhatsApp number.');
+        otpInputs.forEach(i => { i.value = ''; i.classList.remove('error'); });
+        otpInputs[0].focus();
+        updateVerifyButtonState();
+        startExpiryTimer(data.expiresIn || 300);
+        startResendCooldown(data.retryAfter || 30);
+      } catch (err) {
+        console.error('Resend error:', err);
+        showError(err.message || 'Could not resend OTP. Please try again in a few moments.');
+        resendBtn.disabled = false;
+        resendBtn.textContent = 'Resend WhatsApp OTP';
+      }
+    });
+
+    // Sign out handler
+    function handleSignOut(e) {
+      if (e) e.preventDefault();
+      sessionStorage.removeItem('pulsefind_pending_phone');
+      auth.signOut().then(() => {
+        window.location.replace('login.html');
+      }).catch(() => {
+        window.location.replace('login.html');
+      });
+    }
+
+    document.getElementById('topbar-signout').addEventListener('click', handleSignOut);
+    document.getElementById('signout-btn').addEventListener('click', handleSignOut);
+
+    // Initial Auth State Listener
+    auth.onAuthStateChanged(async (user) => {
+      if (isVerificationCompleted) return;
+
+      if (!user) {
+        window.location.replace('login.html');
+        return;
+      }
+
+      currentUser = user;
+      document.body.classList.remove('auth-pending');
+
+      // Check if this user is already verified locally in this browser session
+      const isLocalVerified = localStorage.getItem('pulsefind_phone_verified_' + user.uid) === 'true' ||
+                              sessionStorage.getItem('pulsefind_phone_verified_' + user.uid) === 'true';
+      if (isLocalVerified) {
+        handleVerificationSuccess(user);
+        return;
+      }
+
+      // Check server directly if already verified
+      try {
+        let doc;
+        try {
+          doc = await db.collection('users').doc(user.uid).get({ source: 'server' });
+        } catch (e) {
+          doc = await db.collection('users').doc(user.uid).get();
+        }
+
+        if (doc && doc.exists) {
+          const data = doc.data() || {};
+          if (data.phoneVerified === true || data.emailVerified === true) {
+            handleVerificationSuccess(user);
+            return;
+          }
+
+          if (!activePhone && data.phone) {
+            activePhone = sanitizePhone(data.phone);
+            phoneDisplay.textContent = maskPhone(activePhone);
+            startExpiryTimer(300);
+            startResendCooldown(30);
+          }
+        }
+
+        // Also check role collections in case verification flag was updated there
+        try {
+          const pDoc = await db.collection('pharmacies').doc(user.uid).get();
+          if (pDoc && pDoc.exists) {
+            const pData = pDoc.data() || {};
+            if (pData.phoneVerified === true || pData.emailVerified === true) {
+              handleVerificationSuccess(user);
+              return;
+            }
+            if (!activePhone && pData.phone) {
+              activePhone = sanitizePhone(pData.phone);
+              phoneDisplay.textContent = maskPhone(activePhone);
+              startExpiryTimer(300);
+              startResendCooldown(30);
+            }
+          }
+          const dDoc = await db.collection('donors').doc(user.uid).get();
+          if (dDoc && dDoc.exists) {
+            const dData = dDoc.data() || {};
+            if (dData.phoneVerified === true || dData.emailVerified === true) {
+              handleVerificationSuccess(user);
+              return;
+            }
+            if (!activePhone && dData.phone) {
+              activePhone = sanitizePhone(dData.phone);
+              phoneDisplay.textContent = maskPhone(activePhone);
+              startExpiryTimer(300);
+              startResendCooldown(30);
+            }
+          }
+        } catch (e) {}
+      } catch (err) {
+        console.warn('User doc check error:', err);
+      }
+
+      if (!activePhone) {
+        const sessionPhone = sessionStorage.getItem('pulsefind_pending_phone');
+        if (sessionPhone) {
+          activePhone = sanitizePhone(sessionPhone);
+          phoneDisplay.textContent = maskPhone(activePhone);
+          startExpiryTimer(300);
+          startResendCooldown(30);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

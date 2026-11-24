@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmacy Profile — PulseFind</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .profile-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 2.25rem 1.25rem 3.5rem;
+    flex: 1;
+    width: 100%;
+  }
+  .setup-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-soft);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    margin-bottom: 0.75rem;
+  }
+  .loc-badge {
+    font-size: 0.82rem;
+    color: var(--stock-ok);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+  }
+</style>
+</head>
+<body class="auth-pending">
+
+  <div class="topbar">
+    <a href="index.html" class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      PulseFind
+    </a>
+    <nav>
+      <a href="provider-dashboard.html" id="dash-link" hidden>Dashboard</a>
+      <a href="login.html" id="sign-out-btn">Sign out</a>
+    </nav>
+  </div>
+
+  <main class="profile-wrap">
+    <div class="card">
+      <div class="setup-badge" id="setup-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span id="badge-text">Profile Setup &bull; Step 2 of 2</span>
+      </div>
+      
+      <h1 id="page-title" style="font-size: 1.6rem; margin-bottom: 0.35rem;">Complete your pharmacy profile</h1>
+      <p id="page-sub" style="color: var(--muted); font-size: 0.92rem; margin-bottom: 1.75rem;">
+        Provide verified details so seekers and patients in your area can reach your medical store quickly during emergencies.
+      </p>
+
+      <form id="pharmacy-profile-form">
+        
+        <div class="field">
+          <label for="name">Pharmacy Name *</label>
+          <input type="text" id="name" placeholder="e.g. Shree Ganesh Medical Store" required>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="ownerName">Owner / Pharmacist Name *</label>
+            <input type="text" id="ownerName" placeholder="e.g. Rajesh Sharma" required>
+          </div>
+          <div class="field">
+            <label for="phone">Contact Phone *</label>
+            <input type="tel" id="phone" placeholder="88999 24881" required>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="area">Locality / Area *</label>
+            <input type="text" id="area" placeholder="e.g. Vijay Nagar, Indore" required>
+          </div>
+          <div class="field">
+            <label for="openingHours">Opening Hours *</label>
+            <input type="text" id="openingHours" placeholder="e.g. 8:00 AM – 11:00 PM" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="address">Full Street Address *</label>
+          <textarea id="address" rows="2" placeholder="e.g. Shop 14, Near Scheme 54, Vijay Nagar Square" required></textarea>
+        </div>
+
+        <div class="field">
+          <label for="closedDays">Closed / Off Days</label>
+          <input type="text" id="closedDays" placeholder="e.g. Open all 7 days (or 'Closed on Sundays')">
+        </div>
+
+        <div class="field">
+          <label for="description">Store Description / Highlights</label>
+          <textarea id="description" rows="2" placeholder="Brief note about specialized medicines or consultation available..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Services & Features</label>
+          <div class="checkbox-group">
+            <label class="checkbox-card">
+              <input type="checkbox" id="is24Hours">
+              <span>⏰ 24/7 Open</span>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="hasDelivery">
+              <span>🚚 Home Delivery</span>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="srv-otc" value="OTC & First Aid" checked>
+              <span>🩹 OTC & First Aid</span>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="srv-presc" value="Prescription Rx" checked>
+              <span>💊 Prescription Rx</span>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="srv-bp" value="BP / Sugar Check">
+              <span>🩺 BP / Sugar Check</span>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" id="srv-baby" value="Baby Care">
+              <span>🍼 Baby Care</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field" style="background: var(--bg-soft); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <label style="margin-bottom: 0.1rem;">Store GPS Coordinates</label>
+              <p class="field-help" id="loc-status">Location enables seekers to sort by nearest distance.</p>
+            </div>
+            <button type="button" id="detect-loc-btn" class="btn btn-sm btn-outline-dark">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+              Auto-detect GPS
+            </button>
+          </div>
+        </div>
+
+        <div id="form-error" class="status-out" style="display: none; padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.88rem;"></div>
+
+        <button type="submit" class="btn btn-primary" id="save-btn" style="width: 100%; padding: 0.95rem; font-size: 1.05rem;">
+          Save & Proceed to Dashboard &rsaquo;
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Global Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col footer-brand-col">
+        <a href="index.html" class="footer-brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          PulseFind
+        </a>
+        <p class="footer-desc">Find medicines nearby. Connect with blood donors when it matters.</p>
+        <div class="footer-trust-badge">
+          <span class="pulse-dot"></span> Emergency Healthcare Network
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="search.html?tab=medicine">Find Medicine</a></li>
+          <li><a href="search.html?tab=blood">Find Blood</a></li>
+          <li><a href="login.html">Login / Account</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pharmacies</h4>
+        <ul>
+          <li><a href="login.html">Pharmacy Login / Dashboard</a></li>
+          <li><a href="login.html?signup=pharmacy">Register Pharmacy</a></li>
+        </ul>
+
+        <h4 style="margin-top: 1.25rem;">Blood Donors</h4>
+        <ul>
+          <li><a href="login.html">Donor Login / Dashboard</a></li>
+          <li><a href="login.html?signup=donor">Register as Donor</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:samimanzoor700@gmail.com">samimanzoor700@gmail.com</a>
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+918899924881">+91 88999 24881</a>
+          </li>
+        </ul>
+        <p class="footer-contact-note">Emergency healthcare coordination platform.</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <p>&copy; 2026 PulseFind. All rights reserved.</p>
+        <p>Built for Innovik 6.0 by Team PulseCode</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <script>
+    let currentUid = null;
+    let storeLat = null;
+    let storeLng = null;
+
+    const form = document.getElementById('pharmacy-profile-form');
+    const saveBtn = document.getElementById('save-btn');
+    const formError = document.getElementById('form-error');
+    const locStatus = document.getElementById('loc-status');
+    const detectLocBtn = document.getElementById('detect-loc-btn');
+    const dashLink = document.getElementById('dash-link');
+
+    // Sign out handler
+    document.getElementById('sign-out-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      auth.signOut().then(() => { window.location.replace('login.html'); });
+    });
+
+    // Detect GPS
+    detectLocBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        locStatus.textContent = 'Geolocation is not supported by your browser.';
+        return;
+      }
+      locStatus.textContent = 'Detecting coordinates…';
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          storeLat = pos.coords.latitude;
+          storeLng = pos.coords.longitude;
+          locStatus.innerHTML = `<span class="loc-badge">✓ Coordinates recorded (${storeLat.toFixed(4)}, ${storeLng.toFixed(4)})</span>`;
+        },
+        (err) => {
+          locStatus.textContent = 'Could not fetch GPS automatically. Fallback coordinates will be used.';
+        },
+        { timeout: 8000 }
+      );
+    });
+
+    let guardExecuted = false;
+
+    const VERIFICATION_GRACE_PERIOD_MS = 15000;
+
+    function getRecentVerificationGrace() {
+      const raw = sessionStorage.getItem('pulsefind_verification_complete');
+      if (!raw) return { isRecent: false, remainingMs: 0 };
+      const ts = parseInt(raw, 10);
+      if (isNaN(ts)) {
+        return { isRecent: raw === 'true', remainingMs: VERIFICATION_GRACE_PERIOD_MS };
+      }
+      const elapsed = Date.now() - ts;
+      if (elapsed >= 0 && elapsed < VERIFICATION_GRACE_PERIOD_MS) {
+        return { isRecent: true, remainingMs: VERIFICATION_GRACE_PERIOD_MS - elapsed };
+      }
+      return { isRecent: false, remainingMs: 0 };
+    }
+
+    async function fetchAuthoritativeUserData(uid, delayMs = 600) {
+      const grace = getRecentVerificationGrace();
+      // If verification was completed recently, allocate remaining grace period into attempts
+      const attempts = grace.isRecent ? Math.max(3, Math.ceil(grace.remainingMs / delayMs)) : 2;
+
+      let lastUserData = {};
+      let lastServerReadSuccess = false;
+
+      for (let i = 0; i < attempts; i++) {
+        try {
+          const uSnap = await db.collection('users').doc(uid).get({ source: 'server' });
+          if (uSnap.exists) {
+            lastServerReadSuccess = true;
+            const data = uSnap.data() || {};
+            lastUserData = data;
+            if (data.phoneVerified === true || data.emailVerified === true) {
+              return { exists: true, data, isVerified: true, definitive: true };
+            }
+          }
+        } catch (err) {
+          console.warn(`Firestore server fetch attempt ${i + 1} failed:`, err);
+        }
+
+        try {
+          const pSnap = await db.collection('pharmacies').doc(uid).get({ source: 'server' });
+          if (pSnap.exists) {
+            lastServerReadSuccess = true;
+            const data = pSnap.data() || {};
+            if (data.phoneVerified === true || data.emailVerified === true) {
+              return { exists: true, data, isVerified: true, roleOverride: 'pharmacy', definitive: true };
+            }
+          }
+        } catch (err) {}
+
+        if (i < attempts - 1) {
+          await new Promise(r => setTimeout(r, delayMs));
+        }
+      }
+
+      // If within recent verification grace window, do not treat delay in replication as unverified
+      if (grace.isRecent) {
+        console.info('Within recent verification grace window; treating verification as in-flight.');
+        return { exists: true, data: lastUserData, isVerified: true, graceActive: true };
+      }
+
+      // Fallback read for non-recent verification (only when grace period has completely elapsed)
+      try {
+        const fallbackSnap = await db.collection('users').doc(uid).get();
+        if (fallbackSnap.exists) {
+          const data = fallbackSnap.data() || {};
+          const isVerified = data.phoneVerified === true || data.emailVerified === true;
+          return { exists: true, data, isVerified, definitive: lastServerReadSuccess };
+        }
+      } catch (err) {}
+
+      return { exists: false, data: lastUserData, isVerified: false, definitive: lastServerReadSuccess };
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+      if (guardExecuted) return;
+
+      if (!user) {
+        window.location.replace('login.html');
+        return;
+      }
+
+      guardExecuted = true;
+      currentUid = user.uid;
+
+      try {
+        const { exists, data: userData, isVerified, roleOverride } = await fetchAuthoritativeUserData(user.uid);
+        let role = roleOverride || userData.role;
+
+        // If role not yet in users collection, check pharmacies/donors collections
+        if (!role) {
+          const pharmCheck = await db.collection('pharmacies').doc(user.uid).get();
+          if (pharmCheck && pharmCheck.exists) {
+            role = 'pharmacy';
+          } else {
+            const donorCheck = await db.collection('donors').doc(user.uid).get();
+            if (donorCheck && donorCheck.exists) {
+              role = 'donor';
+            }
+          }
+        }
+
+        // If donor, route to donor profile
+        if (role === 'donor') {
+          window.location.replace('donor-profile.html');
+          return;
+        }
+
+        const isLocalVerified = localStorage.getItem('pulsefind_phone_verified_' + user.uid) === 'true' ||
+                                sessionStorage.getItem('pulsefind_phone_verified_' + user.uid) === 'true';
+        const authVerified = user.emailVerified === true;
+        const verified = isVerified || authVerified || isLocalVerified;
+
+        if (!verified) {
+          sessionStorage.removeItem('pulsefind_verification_complete');
+          sessionStorage.removeItem('pulsefind_phone_verified_' + user.uid);
+          if (userData.phone) {
+            sessionStorage.setItem('pulsefind_pending_phone', userData.phone);
+          }
+          window.location.replace('verify-email.html');
+          return;
+        }
+
+        // Successfully confirmed verification from server/session!
+        localStorage.setItem('pulsefind_phone_verified_' + user.uid, 'true');
+        sessionStorage.setItem('pulsefind_phone_verified_' + user.uid, 'true');
+        sessionStorage.removeItem('pulsefind_pending_phone');
+
+        // Show dashboard link
+        dashLink.hidden = false;
+        document.body.classList.remove('auth-pending');
+
+        if (userData.name) document.getElementById('name').value = userData.name;
+        if (userData.phone) document.getElementById('phone').value = userData.phone;
+        if (userData.area) document.getElementById('area').value = userData.area;
+
+        // Load existing pharmacy document
+        const pharmDoc = await db.collection('pharmacies').doc(user.uid).get();
+        if (pharmDoc.exists) {
+          const data = pharmDoc.data();
+          if (data.profileComplete) {
+            document.getElementById('badge-text').textContent = 'Edit Profile Details';
+            document.getElementById('page-title').textContent = 'Manage Pharmacy Profile';
+            document.getElementById('page-sub').textContent = 'Keep your store hours, delivery options, and contact details up-to-date.';
+            saveBtn.textContent = 'Save Profile Changes';
+          }
+          if (data.name) document.getElementById('name').value = data.name;
+          if (data.ownerName) document.getElementById('ownerName').value = data.ownerName;
+          if (data.phone) document.getElementById('phone').value = data.phone;
+          if (data.area) document.getElementById('area').value = data.area;
+          if (data.address) document.getElementById('address').value = data.address;
+          if (data.openingHours) document.getElementById('openingHours').value = data.openingHours;
+          if (data.closedDays) document.getElementById('closedDays').value = data.closedDays;
+          if (data.description) document.getElementById('description').value = data.description;
+          if (data.is24Hours) document.getElementById('is24Hours').checked = true;
+          if (data.hasDelivery) document.getElementById('hasDelivery').checked = true;
+
+          if (typeof data.lat === 'number' && typeof data.lng === 'number') {
+            storeLat = data.lat;
+            storeLng = data.lng;
+            locStatus.innerHTML = `<span class="loc-badge">✓ Coordinates recorded (${storeLat.toFixed(4)}, ${storeLng.toFixed(4)})</span>`;
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        document.body.classList.remove('auth-pending');
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!currentUid) return;
+
+      formError.style.display = 'none';
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving profile…';
+
+      const name = document.getElementById('name').value.trim();
+      const ownerName = document.getElementById('ownerName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const area = document.getElementById('area').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const openingHours = document.getElementById('openingHours').value.trim();
+      const closedDays = document.getElementById('closedDays').value.trim() || 'Open all days';
+      const description = document.getElementById('description').value.trim();
+      const is24Hours = document.getElementById('is24Hours').checked;
+      const hasDelivery = document.getElementById('hasDelivery').checked;
+
+      const services = [];
+      ['srv-otc', 'srv-presc', 'srv-bp', 'srv-baby'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.checked) services.push(el.value);
+      });
+
+      // Default fallback coordinates near Indore center if none detected
+      const lat = typeof storeLat === 'number' ? storeLat : 22.7196;
+      const lng = typeof storeLng === 'number' ? storeLng : 75.8577;
+
+      const profilePayload = {
+        name,
+        ownerName,
+        phone,
+        area,
+        address,
+        openingHours,
+        closedDays,
+        description,
+        is24Hours,
+        hasDelivery,
+        services,
+        lat,
+        lng,
+        profileComplete: true,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      const userPayload = {
+        name,
+        phone,
+        area,
+        profileComplete: true
+      };
+
+      Promise.all([
+        db.collection('pharmacies').doc(currentUid).set(profilePayload, { merge: true }),
+        db.collection('users').doc(currentUid).set(userPayload, { merge: true })
+      ]).then(() => {
+        localStorage.setItem('pulsefind_phone_verified_' + currentUid, 'true');
+        sessionStorage.setItem('pulsefind_phone_verified_' + currentUid, 'true');
+        sessionStorage.setItem('pulsefind_verification_complete', String(Date.now()));
+        sessionStorage.removeItem('pulsefind_pending_phone');
+        window.location.replace('provider-dashboard.html');
+      }).catch((err) => {
+        console.error('Failed to save profile:', err);
+        formError.textContent = 'Could not save profile: ' + err.message;
+        formError.style.display = 'block';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save & Proceed';
+      });
+    });
+  </script>
+</body>
+</html>

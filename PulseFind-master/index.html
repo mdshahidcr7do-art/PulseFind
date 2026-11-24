@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PulseFind — Find Medicines & Blood Donors Nearby</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .hero {
+    background: linear-gradient(175deg, #0B1D3A 0%, #16213E 100%);
+    padding: 4rem 1.5rem 5.5rem;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(201, 162, 39, 0.15);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    color: var(--gold-light);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.3rem 0.85rem;
+    border-radius: var(--radius-full);
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 {
+    color: var(--white);
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    letter-spacing: -0.02em;
+    max-width: 16ch;
+    line-height: 1.15;
+  }
+  .hero p {
+    color: rgba(250, 248, 245, 0.85);
+    font-size: 1.1rem;
+    max-width: 52ch;
+    margin-top: 1.2rem;
+    line-height: 1.6;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .paths {
+    max-width: 800px;
+    margin: -3.2rem auto 0;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    position: relative;
+    z-index: 5;
+  }
+  .path-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.85rem 1.65rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .path-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--gold);
+  }
+  .path-kicker {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .path-card h2 { font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--navy); }
+  .path-card p { color: var(--muted); font-size: 0.93rem; flex: 1; }
+  .path-card .go {
+    margin-top: 1.35rem;
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .trust-strip {
+    max-width: 800px;
+    margin: 3.5rem auto 1rem;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .trust-item {
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .trust-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+  .trust-item h4 {
+    font-size: 1.05rem;
+    margin-bottom: 0.3rem;
+    color: var(--navy);
+  }
+  .trust-item p {
+    font-size: 0.86rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .how {
+    max-width: 800px;
+    margin: 2.5rem auto 0;
+    padding: 2.5rem 1.5rem 2rem;
+  }
+  .how h3 { font-size: 1.6rem; margin-bottom: 1.75rem; color: var(--navy); }
+  .steps { display: grid; gap: 1.25rem; }
+  .step {
+    display: flex;
+    gap: 1.2rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .step .n {
+    font-family: var(--serif);
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 1.35rem;
+    line-height: 1;
+    width: 2rem;
+    height: 2rem;
+    background: var(--gold-soft);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step p { color: var(--muted); font-size: 0.94rem; }
+  .step strong { color: var(--navy); display: block; font-size: 1.02rem; margin-bottom: 0.2rem; }
+
+  @media (max-width: 680px) {
+    .paths { grid-template-columns: 1fr; margin-top: -2.5rem; }
+    .trust-strip { grid-template-columns: 1fr; gap: 1rem; }
+    .hero { padding: 3rem 1.25rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="index.html" class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      PulseFind
+    </a>
+    <nav id="top-nav">
+      <a href="search.html">Search</a>
+      <a href="login.html" id="auth-link">Sign in</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Innovik 6.0 &bull; Healthcare Discovery</span>
+      </div>
+      <h1>Find medicine or blood, nearby, right now.</h1>
+      <p>Search once to see verified pharmacies with stock and registered donors ready to help — sorted by nearest distance with live map directions.</p>
+      <div class="hero-actions">
+        <a href="search.html" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          Search medicine or blood
+        </a>
+        <a href="login.html" class="btn btn-outline" id="hero-auth-btn">Sign in / Register</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="paths" aria-label="Choose how you'll use PulseFind">
+    <a href="search.html" class="path-card">
+      <p class="path-kicker">
+        <span>🔍</span> Patient / Seeker
+      </p>
+      <h2>I need urgent help</h2>
+      <p>Search any prescription medicine or blood group and locate the closest pharmacy with active stock or available donor.</p>
+      <p class="go">Search nearby &rsaquo;</p>
+    </a>
+    <a href="login.html" class="path-card">
+      <p class="path-kicker">
+        <span>🏥</span> Provider / Donor
+      </p>
+      <h2>I can help others</h2>
+      <p>List your pharmacy's live stock or register as a volunteer blood donor for your locality to save lives.</p>
+      <p class="go">Register / Sign in &rsaquo;</p>
+    </a>
+  </section>
+
+  <section class="trust-strip">
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <h4>Live Inventory Sync</h4>
+      <p>Pharmacies update stock in real-time so patients never make wasted trips during emergencies.</p>
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <h4>Distance Sorted</h4>
+      <p>Instant proximity calculations and integrated OpenStreetMap routing to the closest verified provider.</p>
+    </div>
+    <div class="trust-item">
+      <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <h4>Direct Contact</h4>
+      <p>Call or WhatsApp medical stores and willing donors directly — zero middleman or callbacks.</p>
+    </div>
+  </section>
+
+  <section class="how">
+    <h3>How it works</h3>
+    <div class="steps">
+      <div class="step">
+        <span class="n">1</span>
+        <div>
+          <strong>1. Search Medicine or Blood</strong>
+          <p>Type a medicine name (e.g. Insulin, Paracetamol) or pick a required blood group.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="n">2</span>
+        <div>
+          <strong>2. View Proximity & Live Map</strong>
+          <p>Results from local medical stores and registered donors are sorted by distance with interactive map markers.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="n">3</span>
+        <div>
+          <strong>3. Direct Contact & Navigation</strong>
+          <p>Check store opening hours, delivery availability, or call donors immediately with one tap.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Global Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col footer-brand-col">
+        <a href="index.html" class="footer-brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          PulseFind
+        </a>
+        <p class="footer-desc">Find medicines nearby. Connect with blood donors when it matters.</p>
+        <div class="footer-trust-badge">
+          <span class="pulse-dot"></span> Emergency Healthcare Network
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="search.html?tab=medicine">Find Medicine</a></li>
+          <li><a href="search.html?tab=blood">Find Blood</a></li>
+          <li><a href="login.html">Login / Account</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pharmacies</h4>
+        <ul>
+          <li><a href="login.html">Pharmacy Login / Dashboard</a></li>
+          <li><a href="login.html?signup=pharmacy">Register Pharmacy</a></li>
+        </ul>
+
+        <h4 style="margin-top: 1.25rem;">Blood Donors</h4>
+        <ul>
+          <li><a href="login.html">Donor Login / Dashboard</a></li>
+          <li><a href="login.html?signup=donor">Register as Donor</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:samimanzoor700@gmail.com">samimanzoor700@gmail.com</a>
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+918899924881">+91 88999 24881</a>
+          </li>
+        </ul>
+        <p class="footer-contact-note">Emergency healthcare coordination platform.</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <p>&copy; 2026 PulseFind. All rights reserved.</p>
+        <p>Built for Innovik 6.0 by Team PulseCode</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <script>
+    // Auth awareness on landing page
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          let doc;
+          try {
+            doc = await db.collection('users').doc(user.uid).get({ source: 'server' });
+          } catch (e) {
+            doc = await db.collection('users').doc(user.uid).get();
+          }
+
+          if (doc && doc.exists) {
+            const role = doc.data().role;
+            const isVerified = doc.data().phoneVerified === true || doc.data().emailVerified === true || user.emailVerified === true;
+            const isComplete = doc.data().profileComplete === true;
+            let dashHref = 'verify-email.html';
+            if (isVerified) {
+              if (!isComplete) {
+                dashHref = role === 'donor' ? 'donor-profile.html' : 'pharmacy-profile.html';
+              } else {
+                dashHref = role === 'donor' ? 'donor.html' : 'provider-dashboard.html';
+              }
+            }
+            const authLink = document.getElementById('auth-link');
+            const heroAuthBtn = document.getElementById('hero-auth-btn');
+            
+            if (authLink) {
+              authLink.textContent = isVerified ? 'Dashboard' : 'Verify WhatsApp';
+              authLink.href = dashHref;
+            }
+            if (heroAuthBtn) {
+              heroAuthBtn.textContent = isVerified ? 'Go to Dashboard' : 'Verify WhatsApp';
+              heroAuthBtn.href = dashHref;
+            }
+          }
+        } catch (err) {
+          console.warn('Index auth check error:', err);
+        }
+      }
+    });
+  </script>
+  
+</body>
+</html>

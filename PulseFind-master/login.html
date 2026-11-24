@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in / Register — PulseFind</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .auth-wrap {
+    max-width: 520px;
+    margin: 2.25rem auto 3.5rem;
+    padding: 0 1.25rem;
+    flex: 1;
+    width: 100%;
+  }
+  .auth-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2.25rem;
+    box-shadow: var(--shadow-md);
+  }
+  .auth-card h1 {
+    font-size: 1.65rem;
+    margin-bottom: 0.35rem;
+    color: var(--navy);
+  }
+  .auth-card p.sub {
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-tabs {
+    display: flex;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.25rem;
+    margin-bottom: 1.75rem;
+  }
+  .auth-tab {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s ease;
+  }
+  .auth-tab[aria-selected="true"] {
+    background: var(--white);
+    color: var(--navy);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .role-choice {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .role-option {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.85rem;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--navy);
+    background: var(--white);
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  .role-option input { display: none; }
+  .role-option:hover {
+    border-color: var(--gold);
+    background: rgba(201, 162, 39, 0.04);
+  }
+  .role-option.selected {
+    border-color: var(--gold);
+    background: var(--gold-soft);
+    color: var(--navy);
+  }
+
+  .auth-submit {
+    width: 100%;
+    margin-top: 1.25rem;
+    padding: 0.85rem;
+    font-size: 1rem;
+  }
+
+  .auth-error {
+    background: var(--stock-out-bg);
+    color: var(--stock-out);
+    border: 1px solid rgba(198, 40, 40, 0.25);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 1.1rem;
+  }
+
+  .auth-foot {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .auth-foot a {
+    color: var(--navy);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .signup-only[hidden] {
+    display: none !important;
+  }
+
+  body.auth-pending {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body class="auth-pending">
+
+  <div class="topbar">
+    <a href="index.html" class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      PulseFind
+    </a>
+    <nav>
+      <a href="search.html">Search</a>
+    </nav>
+  </div>
+
+  <main class="auth-wrap">
+    <div class="card auth-card">
+
+      <div class="auth-tabs" role="tablist" aria-label="Sign in or create account">
+        <button class="auth-tab" role="tab" aria-selected="true" id="tab-signin">Sign in</button>
+        <button class="auth-tab" role="tab" aria-selected="false" id="tab-signup">Create account</button>
+      </div>
+
+      <h1 id="form-title">Welcome back</h1>
+      <p class="sub" id="form-sub">Sign in to manage your pharmacy inventory or donor availability.</p>
+
+      <form id="auth-form" autocomplete="on">
+
+        <!-- ACCOUNT TYPE SELECTION (Signup Only) -->
+        <div class="signup-only" id="role-field" hidden>
+          <label>Account Type *</label>
+          <div class="role-choice">
+            <label class="role-option selected" id="role-pharmacy">
+              <input type="radio" name="role" value="pharmacy" checked>
+              <span>🏥 Pharmacy</span>
+            </label>
+            <label class="role-option" id="role-donor">
+              <input type="radio" name="role" value="donor">
+              <span>🩸 Blood Donor</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- ACCOUNT DETAILS -->
+        <div class="signup-only form-section-divider" id="section-account" hidden>Account Details</div>
+
+        <div class="field signup-only" id="name-field" hidden>
+          <label for="name" id="name-label">Pharmacy Name *</label>
+          <input type="text" id="name" placeholder="e.g. Shree Ganesh Medical Store">
+        </div>
+
+        <div class="field">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label for="password">Password *</label>
+          <input type="password" id="password" placeholder="At least 6 characters" required autocomplete="current-password">
+        </div>
+
+        <div class="field signup-only" id="confirm-password-field" hidden>
+          <label for="password-confirm">Confirm Password *</label>
+          <input type="password" id="password-confirm" placeholder="Re-enter your password" autocomplete="new-password">
+        </div>
+
+        <!-- CONTACT DETAILS (Signup Only) -->
+        <div class="signup-only form-section-divider" id="section-contact" hidden>Emergency Contact Details</div>
+
+        <div class="field signup-only" id="phone-field" hidden>
+          <label for="phone">Phone Number *</label>
+          <div class="phone-input-wrap">
+            <span class="prefix">+91</span>
+            <input type="tel" id="phone" placeholder="88999 24881" maxlength="14" inputmode="numeric">
+          </div>
+          <p class="field-help">Used for emergency healthcare communication and patient inquiries.</p>
+        </div>
+
+        <div class="field signup-only" id="location-field" hidden>
+          <label for="area">Locality / Area *</label>
+          <input type="text" id="area" placeholder="e.g. Vijay Nagar, Indore">
+        </div>
+
+        <div class="field signup-only" id="bloodgroup-field" hidden>
+          <label for="bloodgroup">Blood Group *</label>
+          <select id="bloodgroup">
+            <option value="">Select blood group</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+          </select>
+        </div>
+
+        <p class="auth-error" id="auth-error" style="display: none;"></p>
+
+        <button type="submit" class="btn btn-primary auth-submit" id="submit-btn">Sign in &rsaquo;</button>
+      </form>
+
+      <p class="auth-foot" id="switch-line">
+        New to PulseFind? <a href="#" id="switch-link">Create an account</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- Global Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col footer-brand-col">
+        <a href="index.html" class="footer-brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          PulseFind
+        </a>
+        <p class="footer-desc">Find medicines nearby. Connect with blood donors when it matters.</p>
+        <div class="footer-trust-badge">
+          <span class="pulse-dot"></span> Emergency Healthcare Network
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="search.html?tab=medicine">Find Medicine</a></li>
+          <li><a href="search.html?tab=blood">Find Blood</a></li>
+          <li><a href="login.html">Login / Account</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pharmacies</h4>
+        <ul>
+          <li><a href="login.html">Pharmacy Login / Dashboard</a></li>
+          <li><a href="login.html?signup=pharmacy">Register Pharmacy</a></li>
+        </ul>
+
+        <h4 style="margin-top: 1.25rem;">Blood Donors</h4>
+        <ul>
+          <li><a href="login.html">Donor Login / Dashboard</a></li>
+          <li><a href="login.html?signup=donor">Register as Donor</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:samimanzoor700@gmail.com">samimanzoor700@gmail.com</a>
+          </li>
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+918899924881">+91 88999 24881</a>
+          </li>
+        </ul>
+        <p class="footer-contact-note">Emergency healthcare coordination platform.</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <p>&copy; 2026 PulseFind. All rights reserved.</p>
+        <p>Built for Innovik 6.0 by Team PulseCode</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+
+  <script>
+    const tabSignin = document.getElementById('tab-signin');
+    const tabSignup = document.getElementById('tab-signup');
+    const formTitle = document.getElementById('form-title');
+    const formSub = document.getElementById('form-sub');
+    const signupOnly = document.querySelectorAll('.signup-only');
+    const submitBtn = document.getElementById('submit-btn');
+    const switchLine = document.getElementById('switch-line');
+    const switchLink = document.getElementById('switch-link');
+    const rolePharmacy = document.getElementById('role-pharmacy');
+    const roleDonor = document.getElementById('role-donor');
+    const nameLabel = document.getElementById('name-label');
+    const nameInput = document.getElementById('name');
+
+    function setAuthMode(mode) {
+      const isSignin = mode === 'signin';
+      tabSignin.setAttribute('aria-selected', isSignin);
+      tabSignup.setAttribute('aria-selected', !isSignin);
+      signupOnly.forEach(el => el.hidden = isSignin);
+
+      const isDonor = roleDonor.classList.contains('selected');
+      if (!isSignin) {
+        document.getElementById('bloodgroup-field').hidden = !isDonor;
+        nameLabel.textContent = isDonor ? 'Full Name *' : 'Pharmacy Name *';
+        nameInput.placeholder = isDonor ? 'e.g. Rahul Sharma' : 'e.g. Shree Ganesh Medical Store';
+      }
+
+      formTitle.textContent = isSignin ? 'Welcome back' : 'Create your account';
+      formSub.textContent = isSignin
+        ? 'Sign in to manage your pharmacy inventory or donor availability.'
+        : 'Register your medical store or donor profile to join the emergency network.';
+      submitBtn.textContent = isSignin ? 'Sign in ›' : 'Create Account & Verify Email ›';
+      switchLine.innerHTML = isSignin
+        ? 'New to PulseFind? <a href="#" id="switch-link">Create an account</a>'
+        : 'Already registered? <a href="#" id="switch-link">Sign in</a>';
+      
+      document.getElementById('switch-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        setAuthMode(isSignin ? 'signup' : 'signin');
+      });
+      hideError();
+    }
+
+    tabSignin.addEventListener('click', () => setAuthMode('signin'));
+    tabSignup.addEventListener('click', () => setAuthMode('signup'));
+    switchLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      setAuthMode('signup');
+    });
+
+    [rolePharmacy, roleDonor].forEach(opt => {
+      opt.addEventListener('click', () => {
+        rolePharmacy.classList.remove('selected');
+        roleDonor.classList.remove('selected');
+        opt.classList.add('selected');
+        const isDonor = (opt === roleDonor);
+        const isSignup = (tabSignup.getAttribute('aria-selected') === 'true');
+        document.getElementById('bloodgroup-field').hidden = !(isDonor && isSignup);
+        nameLabel.textContent = isDonor ? 'Full Name *' : 'Pharmacy Name *';
+        nameInput.placeholder = isDonor ? 'e.g. Rahul Sharma' : 'e.g. Shree Ganesh Medical Store';
+      });
+    });
+
+    const errorBox = document.getElementById('auth-error');
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.style.display = 'block';
+    }
+    function hideError() {
+      errorBox.style.display = 'none';
+    }
+
+    // Phone number normalization helper
+    function normalizePhone(raw) {
+      if (!raw) return '';
+      let clean = raw.trim().replace(/[^0-9+]/g, '');
+      if (clean.startsWith('+91')) clean = clean.substring(3);
+      else if (clean.startsWith('91') && clean.length > 10) clean = clean.substring(2);
+      clean = clean.replace(/^0+/, '');
+      return clean;
+    }
+
+    function getLocation() {
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) { resolve(null); return; }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          () => resolve(null),
+          { timeout: 3500 }
+        );
+      });
+    }
+
+    document.getElementById('auth-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      hideError();
+
+      const isSignup = tabSignup.getAttribute('aria-selected') === 'true';
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const role = roleDonor.classList.contains('selected') ? 'donor' : 'pharmacy';
+
+      if (isSignup) {
+        const passwordConfirm = document.getElementById('password-confirm').value;
+        const name = document.getElementById('name').value.trim();
+        const area = document.getElementById('area').value.trim();
+        const rawPhone = document.getElementById('phone').value.trim();
+        const bloodGroup = document.getElementById('bloodgroup').value;
+
+        if (!name) {
+          showError(role === 'donor' ? 'Please enter your full name.' : 'Please enter your pharmacy name.');
+          return;
+        }
+
+        if (password !== passwordConfirm) {
+          showError('Passwords do not match. Please check and re-enter.');
+          return;
+        }
+
+        if (password.length < 6) {
+          showError('Password must be at least 6 characters long.');
+          return;
+        }
+
+        const phone = normalizePhone(rawPhone);
+        if (!phone || phone.length < 10) {
+          showError('Please enter a valid 10-digit contact phone number.');
+          return;
+        }
+
+        if (!area) {
+          showError('Please enter your locality / area.');
+          return;
+        }
+
+        if (role === 'donor' && !bloodGroup) {
+          showError('Please select your blood group.');
+          return;
+        }
+
+        const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+        if (!cleanPhone || cleanPhone.length !== 10) {
+          showError('Please enter a valid 10-digit WhatsApp phone number.');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending WhatsApp verification code…';
+
+        getLocation().then((loc) => {
+          return auth.createUserWithEmailAndPassword(email, password)
+            .then(async (cred) => {
+              const uid = cred.user.uid;
+              const lat = loc ? loc.lat : null;
+              const lng = loc ? loc.lng : null;
+
+              // Obtain authentic Firebase ID token for session binding
+              const idToken = await cred.user.getIdToken(true);
+
+              const profile = db.collection('users').doc(uid).set({
+                role,
+                name,
+                area,
+                phone: cleanPhone,
+                email,
+                phoneVerified: false,
+                emailVerified: false,
+                verificationMethod: 'whatsapp_otp',
+                profileComplete: false,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+
+              const roleDoc = role === 'pharmacy'
+                ? db.collection('pharmacies').doc(uid).set({
+                    name,
+                    area,
+                    phone: cleanPhone,
+                    lat,
+                    lng,
+                    phoneVerified: false,
+                    emailVerified: false,
+                    profileComplete: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                  })
+                : db.collection('donors').doc(uid).set({
+                    name,
+                    area,
+                    phone: cleanPhone,
+                    bloodGroup,
+                    lat,
+                    lng,
+                    available: true,
+                    phoneVerified: false,
+                    emailVerified: false,
+                    profileComplete: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
+
+              // Send WhatsApp OTP via Cloudflare Worker bound with verified ID token
+              const sendOtpPromise = fetch('https://pulsefind-otp.ritik-choudhary-1-11-2005.workers.dev/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  phone: cleanPhone,
+                  idToken: idToken
+                })
+              }).then(async (res) => {
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                  throw new Error(data.error || 'Failed to send WhatsApp OTP. Please try again.');
+                }
+                return data;
+              });
+
+              return Promise.all([profile, roleDoc, sendOtpPromise]);
+            });
+        })
+          .then(() => {
+            sessionStorage.setItem('pulsefind_pending_phone', cleanPhone);
+            window.location.replace('verify-email.html');
+          })
+          .catch((err) => {
+            console.error('Signup error:', err);
+            showError(err.message || 'Could not create account. Please try again.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create Account & Verify WhatsApp ›';
+          });
+
+      } else {
+        // Sign in flow
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Signing in…';
+
+        auth.signInWithEmailAndPassword(email, password)
+          .then(async (cred) => {
+            const uid = cred.user.uid;
+            let userDoc;
+            try {
+              userDoc = await db.collection('users').doc(uid).get({ source: 'server' });
+            } catch (e) {
+              userDoc = await db.collection('users').doc(uid).get();
+            }
+
+            if (!userDoc.exists) throw new Error('No account record found.');
+            const userData = userDoc.data();
+            const userRole = userData.role;
+            const isLocalVerified = localStorage.getItem('pulsefind_phone_verified_' + uid) === 'true' ||
+                                    sessionStorage.getItem('pulsefind_phone_verified_' + uid) === 'true';
+            const isVerified = userData.phoneVerified === true || userData.emailVerified === true || cred.user.emailVerified === true || isLocalVerified;
+            const isProfileComplete = userData.profileComplete === true;
+
+            if (!isVerified) {
+              if (userData.phone) {
+                sessionStorage.setItem('pulsefind_pending_phone', userData.phone);
+              }
+              window.location.replace('verify-email.html');
+              return;
+            }
+
+            localStorage.setItem('pulsefind_phone_verified_' + uid, 'true');
+            sessionStorage.setItem('pulsefind_phone_verified_' + uid, 'true');
+            sessionStorage.setItem('pulsefind_verification_complete', String(Date.now()));
+            sessionStorage.removeItem('pulsefind_pending_phone');
+
+            if (userRole === 'donor') {
+              const donorDoc = await db.collection('donors').doc(uid).get();
+              const donorComplete = isProfileComplete || (donorDoc.exists && donorDoc.data().profileComplete === true);
+              window.location.replace(donorComplete ? 'donor.html' : 'donor-profile.html');
+            } else {
+              const pharmDoc = await db.collection('pharmacies').doc(uid).get();
+              const pharmComplete = isProfileComplete || (pharmDoc.exists && pharmDoc.data().profileComplete === true);
+              window.location.replace(pharmComplete ? 'provider-dashboard.html' : 'pharmacy-profile.html');
+            }
+          })
+          .catch((err) => {
+            console.error('Sign in error:', err);
+            showError(err.message || 'Invalid email or password.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Sign in ›';
+          });
+      }
+    });
+
+    // Check URL parameters for direct deep-linking to signup mode
+    const urlParams = new URLSearchParams(window.location.search);
+    const signupParam = urlParams.get('signup');
+    if (signupParam === 'donor') {
+      setAuthMode('signup');
+      roleDonor.click();
+    } else if (signupParam === 'pharmacy') {
+      setAuthMode('signup');
+      rolePharmacy.click();
+    } else if (urlParams.get('tab') === 'signup') {
+      setAuthMode('signup');
+    }
+
+    // Ensure login page is never stuck invisible
+    document.body.classList.remove('auth-pending');
+
+    auth.onAuthStateChanged(async (user) => {
+      document.body.classList.remove('auth-pending');
+      if (user) {
+        // If already logged in, check fresh verification state from server
+        try {
+          let doc;
+          try {
+            doc = await db.collection('users').doc(user.uid).get({ source: 'server' });
+          } catch (e) {
+            doc = await db.collection('users').doc(user.uid).get();
+          }
+          
+          let data = (doc && doc.exists) ? doc.data() : {};
+          let role = data.role;
+          let isComplete = data.profileComplete === true;
+
+          if (!role || !isComplete) {
+            try {
+              const pharmDoc = await db.collection('pharmacies').doc(user.uid).get();
+              if (pharmDoc && pharmDoc.exists) {
+                role = role || 'pharmacy';
+                if (pharmDoc.data() && pharmDoc.data().profileComplete === true) isComplete = true;
+              }
+            } catch (e) {}
+
+            if (!role || !isComplete) {
+              try {
+                const donorDoc = await db.collection('donors').doc(user.uid).get();
+                if (donorDoc && donorDoc.exists) {
+                  role = role || 'donor';
+                  if (donorDoc.data() && donorDoc.data().profileComplete === true) isComplete = true;
+                }
+              } catch (e) {}
+            }
+          }
+
+          role = role || 'pharmacy';
+          const isLocalVerified = localStorage.getItem('pulsefind_phone_verified_' + user.uid) === 'true' ||
+                                  sessionStorage.getItem('pulsefind_phone_verified_' + user.uid) === 'true';
+          const isVerified = data.phoneVerified === true || data.emailVerified === true || user.emailVerified === true || isLocalVerified;
+
+          if (!isVerified) {
+            if (data.phone) {
+              sessionStorage.setItem('pulsefind_pending_phone', data.phone);
+            }
+            window.location.replace('verify-email.html');
+          } else {
+            localStorage.setItem('pulsefind_phone_verified_' + user.uid, 'true');
+            sessionStorage.setItem('pulsefind_phone_verified_' + user.uid, 'true');
+            sessionStorage.setItem('pulsefind_verification_complete', String(Date.now()));
+            sessionStorage.removeItem('pulsefind_pending_phone');
+            if (role === 'donor') {
+              window.location.replace(isComplete ? 'donor.html' : 'donor-profile.html');
+            } else {
+              window.location.replace(isComplete ? 'provider-dashboard.html' : 'pharmacy-profile.html');
+            }
+          }
+        } catch (err) {
+          console.error('Auth state check error:', err);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
